@@ -22,10 +22,10 @@
   <img src="https://img.shields.io/badge/Keycloak-identity%20%2B%20MFA-4D4D4D?style=flat-square&logo=keycloak&logoColor=white" alt="Keycloak">
   <img src="https://img.shields.io/badge/Docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
   <img src="https://img.shields.io/badge/HL7-FHIR-E8412A?style=flat-square" alt="HL7 FHIR">
-  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 18">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19">
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/Vite-build-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite">
-  <img src="https://img.shields.io/badge/Tailwind%20CSS-shadcn%2Fui-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS with shadcn/ui">
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
   <img src="https://img.shields.io/badge/JUnit-5-25A162?style=flat-square&logo=junit5&logoColor=white" alt="JUnit 5">
 </p>
 
@@ -139,10 +139,10 @@ AI is used for exactly four functions: **report summaries, donor ranking, mood t
 | AI integration | AI gateway service (redaction, OCR) behind the `AiService` interface |
 | Payments | SSLCommerz, bKash |
 | Interoperability | HL7 FHIR (report exchange with other hospitals) |
-| Web frontend | React 18, TypeScript, Vite |
-| UI components | shadcn/ui (Radix UI + Tailwind CSS), accessible by default |
-| Frontend data and forms | TanStack Query (server state), React Hook Form + Zod (validation), TanStack Table (admin tables) |
-| Frontend features | FullCalendar (appointments), Recharts (mood trend, reports), oidc-client-ts (Keycloak login), react-i18next (English and Bangla) |
+| Web frontend | React 19, TypeScript, Vite, React Router |
+| UI components | Tailwind CSS 4 with small in-house accessible components (native `<dialog>`, labelled fields), lucide icons, sonner toasts |
+| Frontend data and forms | TanStack Query (server state), React Hook Form + Zod (validation) |
+| Frontend features | Recharts (mood trend, reports), oidc-client-ts (Keycloak login), react-i18next (English and Bangla) |
 | Frontend testing | Vitest, React Testing Library |
 | Mobile app | Patients and donors, push notifications, device location |
 | Database | PostgreSQL 16 with PostGIS, read replicas |
@@ -172,12 +172,17 @@ mediconnect-ehms/
 │   └── SRS_E-Healthcare_Management_System_v1.1.docx
 ├── frontend/                    # React + TypeScript web portals (Vite)
 │   ├── src/
-│   │   ├── api/                 # typed API client for the Spring Boot REST endpoints
-│   │   ├── components/          # shared UI components (shadcn/ui)
-│   │   ├── features/            # one folder per module: appointments, billing, blood, referrals, wellbeing, admin
-│   │   ├── auth/                # Keycloak login and role-based routes
+│   │   ├── app/                 # router, providers, query client
+│   │   ├── api/                 # API client and TypeScript types mirroring the Java DTOs
+│   │   ├── auth/                # Keycloak login, demo login and role-based route guard
+│   │   ├── components/          # shared UI components and page building blocks
+│   │   ├── features/            # one folder per module: account, appointments, clinical, billing,
+│   │   │                        #   reports, referrals, blood, wellbeing, notifications, admin
+│   │   ├── layouts/             # app shell with role-based navigation
+│   │   ├── mock/                # in-browser fake API and demo data (also the REST contract)
 │   │   ├── i18n/                # English and Bangla translations
 │   │   └── main.tsx
+│   ├── .env.example             # VITE_API_MODE=mock | live, Keycloak settings
 │   ├── package.json
 │   └── vite.config.ts           # dev proxy: /api → http://localhost:8080
 ├── src/                         # Spring Boot backend (Java)
@@ -270,7 +275,14 @@ npm install
 npm run dev
 ```
 
-Then open **http://localhost:5173** in your browser. The Vite dev server forwards `/api` requests to the backend on port 8080, so no CORS setup is needed during development.
+Then open **http://localhost:5173** in your browser.
+
+The frontend has two modes, set with `VITE_API_MODE` in `frontend/.env` (copy it from `.env.example`):
+
+- **`mock`** (default): the whole UI runs on built-in sample data with a demo login for each role. No backend, database or Keycloak is needed, so you can start the frontend on its own (skip steps 3 and 4).
+- **`live`**: requests go to the Spring Boot API, and users sign in through Keycloak. The Vite dev server forwards `/api` to the backend on port 8080, so no CORS setup is needed during development.
+
+The REST endpoints the backend must provide are listed in `frontend/src/mock/server.ts`.
 
 For production, `npm run build` creates static files in `frontend/dist/`, which are served from the CDN in front of the API gateway.
 

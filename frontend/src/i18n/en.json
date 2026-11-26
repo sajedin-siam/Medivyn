@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "findDoctors": "Find doctors",
+    "appointments": "Appointments",
+    "history": "Medical history",
+    "bills": "Bills",
+    "reports": "Reports",
+    "blood": "Blood requests",
+    "journal": "Journal",
+    "chat": "Wellbeing chat",
+    "referrals": "Referrals",
+    "sharedJournals": "Shared journals",
+    "donorRequests": "Donation requests",
+    "doctors": "Doctors",
+    "departments": "Departments",
+    "billing": "Billing",
+    "hospital": "Services & capacity",
+    "audit": "Audit history"
+  },
+  "common": {
+    "signOut": "Sign out",
+    "notifications": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "You're all caught up.",
+    "language": "বাংলা",
+    "skip": "Skip to content",
+    "demoMode": "Demo mode: sample data, nothing is sent to a server."
+  },
+  "roles": {
+    "PATIENT": "Patient",
+    "DOCTOR": "Doctor",
+    "DONOR": "Donor",
+    "HOSPITAL_ADMIN": "Hospital admin"
+  },
+  "landing": {
+    "tagline": "AI-assisted e-healthcare management",
+    "title": "Care that connects patients, doctors, hospitals and donors",
+    "subtitle": "Book appointments, keep your medical history in one place, find blood donors fast and look after your mental wellbeing.",
+    "signIn": "Sign in",
+    "register": "Create account",
+    "f1": "Appointments and online sessions",
+    "f1d": "Find a doctor by specialty and book in person or online.",
+    "f2": "Hospital referrals",
+    "f2d": "Doctors refer patients and reports move automatically.",
+    "f3": "Blood donor finder",
+    "f3d": "Nearby compatible donors are alerted. Their location stays private.",
+    "f4": "Mental wellbeing",
+    "f4d": "A private journal, mood trends and a supportive chatbot."
+  },
+  "login": {
+    "title": "Sign in to MediConnect",
+    "keycloak": "Continue with MediConnect ID",
+    "demoTitle": "Choose a demo account",
+    "noAccount": "No account yet?"
+  }
+}
