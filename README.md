@@ -22,7 +22,10 @@
   <img src="https://img.shields.io/badge/Keycloak-identity%20%2B%20MFA-4D4D4D?style=flat-square&logo=keycloak&logoColor=white" alt="Keycloak">
   <img src="https://img.shields.io/badge/Docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
   <img src="https://img.shields.io/badge/HL7-FHIR-E8412A?style=flat-square" alt="HL7 FHIR">
-  <img src="https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat-square&logo=bootstrap&logoColor=white" alt="Bootstrap 5">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 18">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 5">
+  <img src="https://img.shields.io/badge/Vite-build-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-shadcn%2Fui-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS with shadcn/ui">
   <img src="https://img.shields.io/badge/JUnit-5-25A162?style=flat-square&logo=junit5&logoColor=white" alt="JUnit 5">
 </p>
 
@@ -136,7 +139,11 @@ AI is used for exactly four functions: **report summaries, donor ranking, mood t
 | AI integration | AI gateway service (redaction, OCR) behind the `AiService` interface |
 | Payments | SSLCommerz, bKash |
 | Interoperability | HL7 FHIR (report exchange with other hospitals) |
-| Web frontend | HTML5, CSS3, JavaScript (ES6), Bootstrap 5, Fetch API, Chart.js |
+| Web frontend | React 18, TypeScript, Vite |
+| UI components | shadcn/ui (Radix UI + Tailwind CSS), accessible by default |
+| Frontend data and forms | TanStack Query (server state), React Hook Form + Zod (validation), TanStack Table (admin tables) |
+| Frontend features | FullCalendar (appointments), Recharts (mood trend, reports), oidc-client-ts (Keycloak login), react-i18next (English and Bangla) |
+| Frontend testing | Vitest, React Testing Library |
 | Mobile app | Patients and donors, push notifications, device location |
 | Database | PostgreSQL 16 with PostGIS, read replicas |
 | Cache | Redis (cache, live donor location) |
@@ -163,7 +170,17 @@ Inside the core, each layer only calls the layer below it, and controllers never
 mediconnect-ehms/
 ├── docs/
 │   └── SRS_E-Healthcare_Management_System_v1.1.docx
-├── src/
+├── frontend/                    # React + TypeScript web portals (Vite)
+│   ├── src/
+│   │   ├── api/                 # typed API client for the Spring Boot REST endpoints
+│   │   ├── components/          # shared UI components (shadcn/ui)
+│   │   ├── features/            # one folder per module: appointments, billing, blood, referrals, wellbeing, admin
+│   │   ├── auth/                # Keycloak login and role-based routes
+│   │   ├── i18n/                # English and Bangla translations
+│   │   └── main.tsx
+│   ├── package.json
+│   └── vite.config.ts           # dev proxy: /api → http://localhost:8080
+├── src/                         # Spring Boot backend (Java)
 │   ├── main/
 │   │   ├── java/com/mediconnect/
 │   │   │   ├── config/          # security, scheduling, application settings
@@ -180,7 +197,6 @@ mediconnect-ehms/
 │   │   │   ├── audit/           # shared audit service
 │   │   │   └── ai/              # AiService interface and implementations
 │   │   └── resources/
-│   │       ├── static/          # HTML, CSS, JavaScript
 │   │       └── application.properties
 │   └── test/java/com/mediconnect/
 ├── .gitignore
@@ -190,7 +206,7 @@ mediconnect-ehms/
 └── README.md
 ```
 
-Each module contains its own `controller`, `service`, `repository`, `entity` and `dto` classes. The `blood` (donor geo matching), `notification`, `ai` and `report` (documents) modules are the ones deployed as separate services in production; they talk to the core through Kafka events and Temporal workflows.
+The backend is Java and Spring Boot; the frontend is a separate React app that talks to it only through the REST API (JSON over HTTPS). Each backend module contains its own `controller`, `service`, `repository`, `entity` and `dto` classes. The `blood` (donor geo matching), `notification`, `ai` and `report` (documents) modules are the ones deployed as separate services in production; they talk to the core through Kafka events and Temporal workflows.
 
 ---
 
@@ -200,6 +216,7 @@ Each module contains its own `controller`, `service`, `repository`, `entity` and
 
 - JDK 17 or newer
 - Maven 3.9+ (or use the included Maven wrapper `./mvnw`)
+- Node.js 20 LTS or newer, with npm (for the React frontend)
 - Docker and Docker Compose (runs PostgreSQL with PostGIS, Redis, Kafka, Temporal, Keycloak and object storage locally)
 - Git
 
@@ -235,13 +252,27 @@ docker compose up -d
 
 This starts PostgreSQL with PostGIS, Redis, Kafka, Temporal, Keycloak and an S3-compatible object store. The database is created on first start with the credentials above.
 
-### 4. Run the application
+### 4. Run the backend
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Then open **http://localhost:8080** in your browser.
+The REST API runs on **http://localhost:8080**.
+
+### 5. Run the frontend
+
+In a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open **http://localhost:5173** in your browser. The Vite dev server forwards `/api` requests to the backend on port 8080, so no CORS setup is needed during development.
+
+For production, `npm run build` creates static files in `frontend/dist/`, which are served from the CDN in front of the API gateway.
 
 ---
 
@@ -316,6 +347,13 @@ Unit tests cover the core business rules without the database or the AI service,
 - bill status updates after payment
 - role-based access to medical history, reports and journal entries
 
+Frontend tests (components, forms and role-based routes):
+
+```bash
+cd frontend
+npm test
+```
+
 ---
 
 ## OOP Design Highlights
@@ -368,7 +406,7 @@ _Coming soon._
 
 1. Create a feature branch: `git checkout -b feature/blood-reminders`
 2. Commit small, focused changes with clear messages
-3. Run `./mvnw test` before pushing
+3. Run `./mvnw test` and `npm test` (in `frontend/`) before pushing
 4. Open a pull request against `main`
 
 ---
