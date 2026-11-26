@@ -25,15 +25,15 @@ export function RegisterPage() {
   )
 
   return (
-    <div className="grid min-h-screen place-items-center bg-slate-50 px-4 py-10">
+    <div className="grid min-h-screen place-items-center bg-neutral-50 px-4 py-10">
       <div className="w-full max-w-lg">
         <div className="mb-6 flex justify-center"><Link to="/"><Logo /></Link></div>
-        <Card className="p-6">
+        <Card className="p-8">
           {done ? (
             <div className="py-6 text-center">
               <CheckCircle2 className="mx-auto size-12 text-brand-600" />
-              <h1 className="mt-3 text-xl font-semibold">Account created</h1>
-              <p className="mt-2 text-sm text-slate-600">
+              <h1 className="mt-3 text-3xl font-medium">Account created</h1>
+              <p className="mt-2 text-neutral-600">
                 {done.pending
                   ? 'Your doctor account is pending. A hospital admin will review it, and you can sign in once it is approved.'
                   : 'You can now sign in.'}
@@ -42,12 +42,12 @@ export function RegisterPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit((v) => submit.mutate(v))} noValidate className="space-y-4">
-              <h1 className="text-xl font-semibold">Create your account</h1>
+              <h1 className="text-3xl font-medium">Create your account</h1>
               <fieldset>
-                <legend className="mb-2 text-sm font-medium text-slate-700">I am a</legend>
+                <legend className="mb-2 text-sm font-medium text-neutral-700">I am a</legend>
                 <div className="grid grid-cols-3 gap-2">
                   {(['PATIENT', 'DONOR', 'DOCTOR'] as const).map((r) => (
-                    <label key={r} className={`cursor-pointer rounded-lg border px-3 py-2.5 text-center text-sm font-medium ${role === r ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-slate-200 text-slate-600'}`}>
+                    <label key={r} className={`cursor-pointer rounded-lg border px-3 py-2.5 text-center text-sm font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-600 ${role === r ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-neutral-900/10 text-neutral-600 hover:border-neutral-900/30'}`}>
                       <input type="radio" value={r} {...register('role')} className="sr-only" />
                       {r === 'PATIENT' ? 'Patient' : r === 'DONOR' ? 'Blood donor' : 'Doctor'}
                     </label>

@@ -25,6 +25,8 @@ With `VITE_API_MODE=live` the app calls the Spring Boot API on `/api` (proxied t
 
 ## Where things are
 
+- `index.html` is the public landing page: static HTML built on the design kit in `public/assets` (no React). `app.html` is the React app. Vite serves `app.html` for every page route except `/`; a production host needs the same rewrite (serve `app.html` for any path that is not `/` and not a file).
+
 - `src/features/<module>/` holds each module's screens, dialogs and form schemas, matching the backend modules.
 - `src/api/types.ts` mirrors the Java DTOs. Keep the two in sync.
 - `src/mock/server.ts` is the fake API used in mock mode. Its route table is the list of endpoints the backend needs to implement.

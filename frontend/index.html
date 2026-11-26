@@ -1,15 +1,470 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MediConnect EHMS</title>
-    <meta name="description" content="AI-assisted e-healthcare management: appointments, referrals, blood donors and mental wellbeing." />
-    <meta name="theme-color" content="#0f6e56" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="en" data-type="software" data-radius="soft" data-ground="sage" data-buttons="arrow" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MediConnect: hospital software for clinics and patients</title>
+<meta name="description" content="Patients book doctors and pay bills, doctors refer between hospitals with the reports attached, and blood requests reach ranked donors.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MediConnect: hospital software for clinics and patients">
+<meta property="og:description" content="Four portals for patients, doctors, blood donors and hospital admins, in English and Bangla.">
+<meta property="og:image" content="/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ffffff">
+<!-- <link rel="canonical" href="https://[the client's domain]/"> -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<link rel="stylesheet" href="/assets/icons/icon.css">
+<style>
+:root {
+  --p-bg: #ffffff; --p-surface: #f4f4f4; --p-ink: #111111; --p-muted: #6b6b6b;
+  --p-accent: #1a4be0; --p-accent-ink: #ffffff; --p-action: #1a4be0; --p-action-ink: #ffffff;
+  --p-inv-bg: #111111; --p-inv-surface: #1e1e1e; --p-inv-ink: #ffffff; --p-inv-muted: #9a9a9a;
+  --p-inv-accent: #ffffff; --p-inv-accent-ink: #111111; --p-inv-action: #ffffff; --p-inv-action-ink: #111111;
+  --font-display: "Urbanist", system-ui, sans-serif;
+  --font-text: "Urbanist", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.03em;
+  --display-tracking-xl: -0.04em;
+}
+</style>
+<link rel="stylesheet" href="/assets/ui/base.css">
+<link rel="stylesheet" href="/assets/ui/window/fragment.css">
+<link rel="stylesheet" href="/assets/ui/doc/fragment.css">
+<link rel="stylesheet" href="/assets/ui/calendar/fragment.css">
+<link rel="stylesheet" href="/assets/ui/search/fragment.css">
+<link rel="stylesheet" href="/assets/ui/notify/fragment.css">
+<link rel="stylesheet" href="/assets/ui/stat/fragment.css">
+<link rel="stylesheet" href="/assets/ui/chat/fragment.css">
+<link rel="stylesheet" href="/assets/ui/checklist/fragment.css">
+<link rel="stylesheet" href="/assets/ui/toggles/fragment.css">
+<link rel="stylesheet" href="/assets/moments/liquid-type/moment.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="/assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="/assets/moments/moments.js">
+<link rel="modulepreload" href="/assets/moments/lib.js">
+<link rel="modulepreload" href="/assets/moments/liquid-type/moment.js">
+<style>
+  /* the app-frame recipe (sections-library.md) */
+  .app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
+  .app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+  .app > .app__pane + .app__pane { border-left: 1px solid var(--u-line); }
+  .app > .app__pane > .ui-panel { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  .app > .app__pane::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, var(--u-bg)); pointer-events: none; }
+  .app .ui-doc { padding: var(--s-6); }
+  @media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
+  @media (max-width: 1023px) {
+    .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    .app > .app__pane--list { max-height: 252px; }
+    .app > .app__pane--list::after { display: none; }
+    .app .ui-win__side { display: none; }
+    .app .ui-win__body { grid-template-columns: minmax(0, 1fr); }
+    .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--u-line); }
+  }
+  @media (max-width: 639px) {
+    .app.ui { grid-template-rows: minmax(0, 1fr); }
+    .app > .app__pane--list { display: none; }
+    .app > .app__pane + .app__pane { border-top: 0; }
+  }
+  #portals .panel { --p-h: 300px; }
+  @media (min-width: 640px) and (max-width: 1023px) { #portals .card { grid-column: 1 / -1; } #portals .panel { --p-h: calc((100svh - 640px) / 2); } }
+  @media (max-width: 639px) { #portals .panel { --p-h: 156px; } }
+  #questions > .wrap { align-content: stretch; }
+  #privacy .mo-lt__type + p { margin-top: var(--s-6); }
+  .faq__aside { display: flex; flex-direction: column; align-self: stretch; }
+  .faq__frame { flex: 1 1 0; min-height: 280px; border-radius: var(--r-lg); }
+  /* the tablet keeps the questions beside their picture, so the section stays one screen */
+  @media (min-width: 640px) and (max-width: 1023px) { #questions .faq__aside { grid-column: 1 / span 5; } #questions .faq { grid-column: 6 / -1; } }
+  /* the bar holds the logo, the main button and the menu button; under 360 the button waits in the sheet */
+  @media (max-width: 359px) { .nav:not(.is-open) .nav__actions { display: none; } .nav:not(.is-open) .nav__actions + .nav__toggle { margin-left: auto; } }
+  .nav .menu-card .panel { --p-h: 160px; }
+</style>
+</head>
+<body>
+<!-- type: software
+     deal: hero split, nav nav-mega, close close-type, footer footer-statement, rhythm space, buttons arrow,
+           mark initial, palette white-link-blue, type urbanist (instrument and outfit failed hero-lines), ground sage, grounds none,
+           effect gradient-mesh in the one [data-visual] frame (#wellbeing)
+     moments: liquid-type in #privacy (its own statement section: the one promise a donor needs to hear) -->
+
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="#top"><span class="mark mark--initial" aria-hidden="true">M</span>MediConnect</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="#portals">Portals <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Patients</p>
+              <a href="#portals">Find doctors<span>By name or specialty</span></a>
+              <a href="#questions">Bills<span>Pay by bKash or card</span></a>
+              <a href="#wellbeing">Journal<span>A 1 to 5 mood scale</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Hospitals</p>
+              <a href="#referrals">Referrals<span>Track every request</span></a>
+              <a href="#privacy">Blood requests<span>Alert ranked donors</span></a>
+              <a href="#questions">Audit history<span>Who changed what, and when</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="#referrals">
+              <div class="panel">
+                <div class="stage stage--fade-br"><div class="at-corner" style="--ax:24px;--ay:24px">
+                  <div class="ui ui-notify" data-ui="notify">
+                    <ul class="ui-notify__list" data-notify-list>
+                      <li class="ui-note"><span class="ui-avatar ui-note__av" data-tone="3">KU</span><span class="ui-note__text"><span class="ui-note__title">Referral accepted<time>now</time></span><span class="ui-note__body">Kamal Uddin, Lakeview Hospital</span></span></li>
+                    </ul>
+                  </div>
+                </div></div>
+              </div>
+              <span class="t-card">Referral tracking</span>
+              <span class="t-small muted">Reports go with the patient</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="#referrals">Referrals</a></div>
+      <div class="nav__item"><a class="nav__link" href="#wellbeing">Wellbeing</a></div>
+      <div class="nav__item"><a class="nav__link" href="#questions">Questions</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="/login">Sign in</a>
+      <a class="btn btn--primary" href="/register">Sign up</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero hero--split" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <h1 id="hero-h">Hospital software for clinics and patients</h1>
+        <p class="hero__lead">Four portals, for patients, doctors, blood donors and hospital admins, in English and Bangla. Patients book a doctor and pay by bKash or card.</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/register">Sign up<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+          <a class="btn btn--secondary" href="#referrals">See the referral list</a>
+        </div>
+      </div>
+      <div class="hero__media frame frame--lit span-6 start-7" role="img" aria-label="A patient's appointment calendar for November with three booked visits">
+        <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:440px;--ax:max(24px, 50% - 220px);--ay:56px;--ay-sm:24px" data-ui-loop>
+          <div class="ui ui-panel ui-calendar" data-ui="calendar" data-start="30" data-end="30" data-month="Nov">
+            <div class="ui-cal__head">
+              <div class="ui-cal__month">November <span>2026</span></div>
+              <span class="ui-spacer"></span>
+              <span class="ui-chip ui-chip--plain ui-chip--ink" data-cal-range>Nov 30</span>
+              <span class="ui-cal__nav" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M10 4 6 8l4 4"/></svg></span>
+              <span class="ui-cal__nav" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m6 4 4 4-4 4"/></svg></span>
+            </div>
+            <div class="ui-cal__dow" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+            <div class="ui-cal__days">
+              <span class="ui-cal__d is-out"><b>26</b></span><span class="ui-cal__d is-out"><b>27</b></span><span class="ui-cal__d is-out"><b>28</b></span><span class="ui-cal__d is-out"><b>29</b></span><span class="ui-cal__d is-out"><b>30</b></span><span class="ui-cal__d is-out"><b>31</b></span><span class="ui-cal__d" data-d="1"><b>1</b></span>
+              <span class="ui-cal__d" data-d="2"><b>2</b></span><span class="ui-cal__d" data-d="3"><b>3</b></span><span class="ui-cal__d" data-d="4"><b>4</b></span><span class="ui-cal__d" data-d="5"><b>5</b></span><span class="ui-cal__d" data-d="6"><b>6</b></span><span class="ui-cal__d" data-d="7"><b>7</b></span><span class="ui-cal__d" data-d="8"><b>8</b></span>
+              <span class="ui-cal__d" data-d="9"><b>9</b></span><span class="ui-cal__d" data-d="10"><b>10</b></span><span class="ui-cal__d" data-d="11"><b>11</b></span><span class="ui-cal__d" data-d="12"><b>12</b></span><span class="ui-cal__d" data-d="13"><b>13</b></span><span class="ui-cal__d" data-d="14"><b>14</b></span><span class="ui-cal__d" data-d="15"><b>15</b></span>
+              <span class="ui-cal__d" data-d="16"><b>16</b></span><span class="ui-cal__d" data-d="17"><b>17</b></span><span class="ui-cal__d" data-d="18"><b>18</b></span><span class="ui-cal__d" data-d="19"><b>19</b></span><span class="ui-cal__d" data-d="20"><b>20</b></span><span class="ui-cal__d" data-d="21"><b>21</b></span><span class="ui-cal__d" data-d="22"><b>22</b></span>
+              <span class="ui-cal__d" data-d="23"><b>23</b></span><span class="ui-cal__d" data-d="24"><b>24</b></span><span class="ui-cal__d" data-d="25"><b>25</b></span><span class="ui-cal__d" data-d="26"><b>26</b></span><span class="ui-cal__d is-today" data-d="27"><b>27</b></span><span class="ui-cal__d" data-d="28"><b>28</b></span><span class="ui-cal__d" data-d="29"><b>29</b></span>
+              <span class="ui-cal__d is-start is-end" data-d="30"><b>30</b></span><span class="ui-cal__d is-out"><b>1</b></span><span class="ui-cal__d is-out"><b>2</b></span><span class="ui-cal__d is-out"><b>3</b></span><span class="ui-cal__d is-out"><b>4</b></span><span class="ui-cal__d is-out"><b>5</b></span><span class="ui-cal__d is-out"><b>6</b></span>
+            </div>
+            <div class="ui-cal__events">
+              <div class="ui-cal__ev" data-ev="30">
+                <span class="ui-cal__date"><b>30</b><i>Nov</i></span>
+                <span class="ui-cal__evtext"><span class="ui-cal__evtitle">Dr. Tanvir Hasan, Cardiology</span><span class="ui-cal__evsub">In person, 10:30, fee 1,000 Tk</span></span>
+              </div>
+              <div class="ui-cal__ev" data-ev="30">
+                <span class="ui-cal__date"><b>30</b><i>Nov</i></span>
+                <span class="ui-cal__evtext"><span class="ui-cal__evtitle">Dr. Farhana Kabir, Psychiatry</span><span class="ui-cal__evsub">Online session, 16:00</span></span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="referrals" aria-labelledby="referrals-h">
+    <div class="wrap">
+      <div class="grid">
+        <h2 class="span-5" id="referrals-h">Hospital referrals, with the reports attached</h2>
+        <div class="span-6 start-7 stack-4">
+          <p>A doctor picks a hospital by service and capacity and sends the request. Once it is accepted, the patient's reports go to that hospital over HL7 FHIR.</p>
+          <a class="link" href="#questions">See what each status means</a>
+        </div>
+      </div>
+      <div class="ui app fill" role="img" aria-label="The referral list beside an open referral for Kamal Uddin to Lakeview Hospital, with its attached report summary" data-ui-pause-host>
+        <div class="app__pane app__pane--list">
+          <div class="ui ui-panel ui-win" data-ui="window" data-open="Pending" data-work="Sending reports" data-done="Accepted">
+            <div class="ui-win__bar">
+              <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="ui-win__crumb">Referrals <i>/</i> <b>Sent</b></span>
+              <span class="ui-spacer"></span>
+              <span class="ui-win__search" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="ui-win__ph">Search</span><span class="ui-kbd">/</span></span>
+            </div>
+            <div class="ui-win__body">
+              <nav class="ui-win__side" aria-hidden="true">
+                <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 9h3l1 1.5h3l1-1.5h3"/><path d="M2.5 9 4 3.5h8L13.5 9v3.5h-11z"/></svg>Sent<em>9</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/></svg>Pending<em>3</em></span>
+                <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Accepted</span>
+                <span class="ui-win__label">Services</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>Cardiology</span>
+                <span class="ui-win__nav"><span class="ui-win__hash">#</span>ICU</span>
+              </nav>
+              <div class="ui-win__main">
+                <div class="ui-win__cols" aria-hidden="true"><span>Patient</span><span>Service and hospital</span><span>Status</span><span>Sent</span></div>
+                <ul class="ui-win__rows">
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">KU</span><span class="ui-win__who">Kamal Uddin</span><span class="ui-win__sub">Cardiac Surgery · Lakeview Hospital</span><span class="ui-win__st" data-st>Pending</span><span class="ui-win__age">1d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">SA</span><span class="ui-win__who">Sadia Akter</span><span class="ui-win__sub">Cardiology · MediConnect General</span><span class="ui-win__st" data-st>Pending</span><span class="ui-win__age">1d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">AR</span><span class="ui-win__who">Ayesha Rahman</span><span class="ui-win__sub">ICU · Northside Medical Center</span><span class="ui-win__st is-you" data-st>Declined</span><span class="ui-win__age">5d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">MS</span><span class="ui-win__who">Mahmud Sarker</span><span class="ui-win__sub">Neurology · Lakeview Hospital</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">6d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">RB</span><span class="ui-win__who">Rumana Begum</span><span class="ui-win__sub">Pediatrics · Riverside Clinic</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">8d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">HK</span><span class="ui-win__who">Habib Khan</span><span class="ui-win__sub">Oncology · Eastgate Hospital</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">9d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">NP</span><span class="ui-win__who">Nadia Parvin</span><span class="ui-win__sub">Orthopedics · Riverside Clinic</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">12d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">FA</span><span class="ui-win__who">Faisal Ahmed</span><span class="ui-win__sub">Cardiology · Northside Medical Center</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">14d</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">TI</span><span class="ui-win__who">Tahmina Islam</span><span class="ui-win__sub">Dialysis · Eastgate Hospital</span><span class="ui-win__st is-done" data-st>Accepted</span><span class="ui-win__age">15d</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app__pane app__pane--open" data-ui-loop>
+          <div class="ui ui-doc" data-ui="doc">
+            <article class="ui-doc__page">
+              <div class="ui-doc__label">Referral to Lakeview Hospital, Cardiac Surgery</div>
+              <div class="ui-doc__title">Kamal Uddin, sent by Dr. Tanvir Hasan</div>
+              <div class="ui-doc__text">Reason: <mark class="ui-doc__mark is-on">suspected valve disease</mark>, needs a surgical opinion. Lakeview lists Cardiac Surgery and its capacity as Available.</div>
+              <div class="ui-doc__text">Attached: echocardiogram report, ECG, blood panel. <mark class="ui-doc__mark" data-kind="Sent" data-msg="Three reports go to Lakeview once it accepts." data-where="Over HL7 FHIR">The reports are sent on acceptance</mark>, or by the patient at any time.</div>
+              <div class="ui-doc__text">If Lakeview declines, MediConnect suggests other hospitals by service, capacity and distance.</div>
+              <div class="ui-doc__text">Status changes reach the doctor and the patient as notifications.</div>
+            </article>
+            <aside class="ui-doc__note ui-panel is-on" aria-live="polite">
+              <div class="ui-doc__kind"><span class="ui-doc__dot"></span><span data-doc-kind>Report summary</span></div>
+              <div class="ui-doc__msg" data-doc-msg>Echocardiogram: thickened mitral valve, moderate regurgitation.</div>
+              <div class="ui-doc__where" data-doc-where>AI summary, shown with the report</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section g2" id="portals" aria-labelledby="portals-h">
+    <div class="wrap">
+      <div class="group">
+        <div class="section-head">
+          <h2 id="portals-h">What each MediConnect portal does</h2>
+        </div>
+        <div class="grid">
+          <article class="card card--row card--open span-6">
+            <h3>Books a doctor by specialty</h3>
+            <p>Patients search by name, specialty or department, then book a visit in person or an online session.</p>
+            <div class="panel">
+              <div class="stage stage--fade-b"><div class="at-rise fit to-edge" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:48px;--ay-sm:24px" data-ui-loop>
+                <div class="ui ui-panel ui-search" data-ui="search">
+                  <div class="ui-search__field">
+                    <svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+                    <span class="ui-search__q"><span data-search-q>cardiology</span><i class="ui-search__caret"></i></span>
+                    <kbd class="ui-search__kbd">Ctrl K</kbd>
+                  </div>
+                  <div class="ui-search__group">Doctors</div>
+                  <ul class="ui-search__list" data-search-list>
+                    <li class="ui-search__row is-sel"><span class="ui-search__ico"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="6" r="2.5"/><path d="M3.5 13.5c.6-2.3 2.4-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/></svg></span><span class="ui-search__t">Dr. Tanvir Hasan, <b>Cardiology</b></span><span class="ui-search__m">1,000 Tk</span></li>
+                    <li class="ui-search__row"><span class="ui-search__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 13.5h11M4 13.5v-8h8v8M7 8h2M8 7v2"/></svg></span><span class="ui-search__t"><b>Cardiology</b> department</span><span class="ui-search__m">1 doctor</span></li>
+                    <li class="ui-search__row"><span class="ui-search__ico"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="6" r="2.5"/><path d="M3.5 13.5c.6-2.3 2.4-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/></svg></span><span class="ui-search__t">Dr. Imran Hossain, Neurology</span><span class="ui-search__m">Pending</span></li>
+                  </ul>
+                  <div class="ui-search__foot"><span><kbd>&uarr;</kbd><kbd>&darr;</kbd> to move</span><span><kbd>Enter</kbd> to book</span></div>
+                </div>
+              </div></div>
+            </div>
+          </article>
+          <article class="card card--row card--open span-6">
+            <h3>Ranks donors for a hospital blood request</h3>
+            <p>Matching weighs blood group, distance, availability and the recovery period, then alerts donors in order.</p>
+            <div class="panel">
+              <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:340px;--ax:max(24px, 50% - 170px);--ay:40px;--ay-sm:24px">
+                <div class="ui ui-panel ui-checks" data-ui="checklist">
+                  <div class="ui-checks__head">
+                    <div class="ui-title">Blood request, O+, 2 units</div>
+                    <span class="ui-spacer"></span>
+                    <div class="ui-meta" data-checks-count>3 of 5</div>
+                  </div>
+                  <div class="ui-checks__bar"><i data-checks-bar style="--k:0.6"></i></div>
+                  <ul class="ui-checks__list">
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Posted for MediConnect General</span></li>
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">6 matching donors ranked</span></li>
+                    <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Alerts sent by push, SMS and email</span></li>
+                    <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Reminder 2 of 3 sent</span></li>
+                    <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">2 donors accept, reminders stop</span></li>
+                  </ul>
+                </div>
+              </div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Summarises reports in 3 formats</h3>
+          <p>Upload a PDF, JPG or PNG of a paper report. A short summary of its key findings shows beside it.</p>
+          <div class="panel">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:380px;--ax:max(24px, 50% - 190px);--ay:calc(100% - 180px);--ay-sm:calc(100% - 180px)">
+              <div class="ui ui-notify" data-ui="notify">
+                <ul class="ui-notify__list" data-notify-list>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Summary ready<time>now</time></span><span class="ui-note__body">Blood panel: haemoglobin below range</span></span><span class="ui-btn ui-btn--sm ui-note__btn">Open</span></li>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Report uploaded<time>1m</time></span><span class="ui-note__body">blood-panel-nov.pdf, 2 pages</span></span></li>
+                  <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">ECG sent to Lakeview<time>2d</time></span><span class="ui-note__body">With referral, over HL7 FHIR</span></span></li>
+                </ul>
+              </div>
+            </div></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Charts shared moods on a 1 to 5 scale</h3>
+          <p>Doctors see a trend of the journal entries each patient chose to share with them, and nothing else.</p>
+          <div class="panel">
+            <div class="stage stage--fade-b"><div class="at-corner" style="--ax:24px;--ay:40px;--ay-sm:12px">
+              <div class="ui ui-panel ui-stat" data-ui="stat" data-from="2.9" data-to="3.6" data-suffix=" of 5">
+                <div class="ui-stat__head">
+                  <div class="ui-stat__top">
+                    <span class="ui-stat__label">Average mood, shared entries</span>
+                    <span class="ui-stat__range">Last 14 days<svg class="ui-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg></span>
+                  </div>
+                  <div class="ui-stat__line">
+                    <span class="ui-stat__num" data-stat-num>3.6 of 5</span>
+                    <span class="ui-chip ui-chip--plain ui-stat__delta"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.5v-7M3 5.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>0.7</span>
+                    <span class="ui-stat__sub">vs. the 14 days before</span>
+                  </div>
+                </div>
+                <div class="ui-stat__chart">
+                  <svg class="ui-stat__svg" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
+                    <path class="ui-stat__grid" d="M0 30.5H400M0 60.5H400M0 90.5H400"/>
+                    <path class="ui-stat__cover" fill-rule="evenodd" d=""/>
+                    <g class="ui-stat__bars"><rect rx="3" x="0.00" y="60" width="21.14" height="60"/><rect rx="3" x="29.14" y="48" width="21.14" height="72"/><rect rx="3" x="58.29" y="72" width="21.14" height="48"/><rect rx="3" x="87.43" y="48" width="21.14" height="72"/><rect rx="3" x="116.57" y="36" width="21.14" height="84"/><rect rx="3" x="145.71" y="48" width="21.14" height="72"/><rect rx="3" x="174.86" y="60" width="21.14" height="60"/><rect rx="3" x="204.00" y="36" width="21.14" height="84"/><rect rx="3" x="233.14" y="36" width="21.14" height="84"/><rect rx="3" x="262.29" y="24" width="21.14" height="96"/><rect rx="3" x="291.43" y="48" width="21.14" height="72"/><rect rx="3" x="320.57" y="24" width="21.14" height="96"/><rect rx="3" x="349.71" y="36" width="21.14" height="84"/><rect rx="3" x="378.86" y="24" width="21.14" height="96"/></g>
+                  </svg>
+                  <div class="ui-stat__axis" aria-hidden="true"><span>Nov 14</span><span>Nov 21</span><span>Today</span></div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section statement" id="privacy" data-moment="liquid-type" aria-labelledby="privacy-h">
+    <div class="wrap">
+      <h2 class="mo-lt__type" id="privacy-h">Donor locations stay private</h2>
+      <p class="t-lead measure">Matching uses each donor's distance, but no patient, doctor or admin ever sees where a donor is. Donors switch themselves to inactive at any time.</p>
+    </div>
+  </section>
+
+  <section class="section" id="wellbeing" aria-labelledby="wellbeing-h">
+    <div class="wrap">
+      <div class="grid fill">
+        <div class="span-5 stack-6">
+          <h2 id="wellbeing-h">Wellbeing support with a private journal and a chatbot</h2>
+          <p class="t-lead">Patients rate each day from 1 to 5 and choose which entries a doctor may read. When the chatbot reads signs of serious distress, it points to a doctor or a helpline.</p>
+          <a class="link" href="#questions">Read how the AI is used</a>
+        </div>
+        <div class="frame frame--split span-6 start-7" data-visual data-fx="gradient-mesh" data-fx-seed="12" role="img" aria-label="The wellbeing chatbot answering a patient who has slept badly all week">
+          <div class="stage stage--fade-b"><div class="at-rise to-edge fit" style="--fit-max:400px;--ax:max(24px, 50% - 200px);--ay:56px;--ay-sm:24px">
+            <div class="ui ui-panel ui-chat" data-ui="chat">
+              <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Wellbeing chat</div><span class="ui-chat__online">Online</span><span class="ui-spacer"></span></div>
+              <div class="ui-chat__body">
+                <div class="ui-chat__day">Today, 22:10</div>
+                <div class="ui-msg ui-msg--me" data-chat-q><span class="ui-msg__text">I have slept badly all week and feel tense at work.</span></div>
+                <div class="ui-msg ui-msg--bot" data-chat-a>
+                  <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
+                  <span class="ui-msg__col">
+                    <span class="ui-chat__answer">That sounds hard. A fixed bedtime and no screens for the last hour often help. You can also <b>book Dr. Farhana Kabir</b> for an online session.</span>
+                    <span class="ui-chat__srcs"><span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Sleep tips</span></span>
+                  </span>
+                </div>
+              </div>
+              <div class="ui-chat__input"><span class="ui-chat__ph">Write a message</span><span class="ui-chat__send" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3.5M3.8 7.5 8 3.3l4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section g2m" id="questions" aria-labelledby="questions-h">
+    <div class="wrap grid grid--top">
+        <div class="span-5 stack-6 faq__aside">
+          <h2 id="questions-h">Questions</h2>
+          <p>About the AI, privacy, payments and referrals.</p>
+          <div class="frame frame--lit faq__frame" role="img" aria-label="Ayesha Rahman's journal sharing: shared with Dr. Farhana Kabir, not with Dr. Tanvir Hasan">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:360px;--ax:max(24px, 50% - 180px);--ay:32px;--ay-sm:24px">
+              <div class="ui ui-panel ui-toggles" data-ui="toggles">
+                <div class="ui-head">
+                  <svg class="ui-icon ui-toggles__ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 13 4v3.6c0 3-2.1 5.4-5 6.6-2.9-1.2-5-3.6-5-6.6V4z"/><path d="m5.8 8 1.6 1.6 3-3.2"/></svg>
+                  <div class="ui-title">Sharing</div>
+                  <span class="ui-spacer"></span>
+                  <div class="ui-meta" data-tg-count>1 of 3 on</div>
+                </div>
+                <ul class="ui-toggles__list">
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Dr. Farhana Kabir</span><span class="ui-tg__sub">Psychiatry, sees the mood trend</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Share with Dr. Farhana Kabir" tabindex="-1"><i></i></button></li>
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Dr. Tanvir Hasan</span><span class="ui-tg__sub">Cardiology</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Share with Dr. Tanvir Hasan" tabindex="-1"><i></i></button></li>
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Dr. Mehnaz Sultana</span><span class="ui-tg__sub">Pediatrics</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Share with Dr. Mehnaz Sultana" tabindex="-1"><i></i></button></li>
+                </ul>
+              </div>
+            </div></div>
+          </div>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3>Which 4 jobs does the AI do?</h3><p>Report summaries, donor ranking, mood trends and the chatbot. It never decides on treatment, and the rest keeps working when it is down.</p></div>
+          <div class="faq__item"><h3>Who can read a patient's medical history?</h3><p>The patient and the treating doctor. Journal entries go only to the doctors the patient picks.</p></div>
+          <div class="faq__item"><h3>How do patients pay a hospital bill?</h3><p>In cash at the hospital, by card through SSLCommerz, or by bKash.</p></div>
+          <div class="faq__item"><h3>What do the hospital referral statuses mean?</h3><p>Pending, Accepted, Declined or More information needed. A declined referral comes with other hospitals to try.</p></div>
+          <div class="faq__item"><h3>Is the software certified for clinical use?</h3><p>No. It is an academic project, not a certified medical system.</p></div>
+        </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing footer--statement g2m" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Open your MediConnect account</h2>
+        <p class="t-small muted">Patients and donors start straight away. Doctor accounts wait for a hospital admin's approval.</p>
+      </div>
+      <a class="btn btn--primary btn--xl btn--wide" href="/register">Sign up<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top">MediConnect</a>
+          <p class="footer__lede">Software for hospitals, clinics and their patients.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Portals</h3><ul><li><a href="#portals">Patients</a></li><li><a href="#privacy">Donors</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Referrals</h3><ul><li><a href="#referrals">Referral list</a></li><li><a href="#questions">Statuses</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Wellbeing</h3><ul><li><a href="#wellbeing">Journal</a></li><li><a href="#wellbeing">Chatbot</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Account</h3><ul><li><a href="/login">Sign in</a></li><li><a href="#questions">Questions</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 MediConnect. An academic project, not a certified medical system.</span>
+        <div class="socials"></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/assets/system.js"></script>
+<script type="module" src="/assets/motion/motion.js"></script>
+<script type="module" src="/assets/layout/layout.js"></script>
+</body>
 </html>

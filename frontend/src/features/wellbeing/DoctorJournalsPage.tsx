@@ -21,7 +21,7 @@ export function MoodChart({ entries }: { entries: SharedJournalEntry[] }) {
             <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#64748b' }} />
             <YAxis domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fontSize: 12, fill: '#64748b' }} />
             <Tooltip formatter={(v) => [moodLabel(Number(v)), 'Mood']} />
-            <Line type="monotone" dataKey="mood" stroke="#534ab7" strokeWidth={2.5} dot={{ r: 4, fill: '#534ab7' }} />
+            <Line type="monotone" dataKey="mood" stroke="#1a4be0" strokeWidth={2.5} dot={{ r: 4, fill: '#1a4be0' }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

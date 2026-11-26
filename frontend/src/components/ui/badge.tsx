@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { cn } from '../../lib/format'
 
 const tones = {
-  neutral: 'bg-slate-100 text-slate-700',
+  neutral: 'bg-neutral-100 text-neutral-700',
   success: 'bg-brand-50 text-brand-800',
   warning: 'bg-amber-100 text-amber-800',
   danger: 'bg-red-100 text-red-700',
@@ -12,5 +12,5 @@ const tones = {
 export type Tone = keyof typeof tones
 
 export function Badge({ tone = 'neutral', children, className }: { tone?: Tone; children: ReactNode; className?: string }) {
-  return <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium', tones[tone], className)}>{children}</span>
+  return <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-[13px] font-medium', tones[tone], className)}>{children}</span>
 }

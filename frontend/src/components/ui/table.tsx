@@ -9,8 +9,8 @@ export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>)
   )
 }
 export function Th({ className, ...props }: ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th scope="col" {...props} className={cn('border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500', className)} />
+  return <th scope="col" {...props} className={cn('border-b border-neutral-900/10 bg-neutral-50 px-4 py-2.5 text-[13px] font-medium text-neutral-500', className)} />
 }
 export function Td({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td {...props} className={cn('border-b border-slate-100 px-4 py-3 align-middle', className)} />
+  return <td {...props} className={cn('border-b border-neutral-900/5 px-4 py-3 align-middle', className)} />
 }
