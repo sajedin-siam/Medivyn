@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 760" width="800" height="760" role="img" aria-labelledby="t d">
+<title id="t">Production architecture for MediConnect</title>
+<desc id="d">Mobile and web clients connect through a CDN, WAF and API gateway with Keycloak identity to a core modular monolith and four extracted services (donor geo, notifications, AI gateway, documents). Kafka and Temporal handle events and workflows, backed by PostgreSQL, Redis, object storage and an audit store, with external SMS, payment, LLM and hospital providers.</desc>
+<style>
+  text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .node rect { stroke-width: 1px; }
+  .node .title { font-size: 14px; font-weight: 600; text-anchor: middle; }
+  .node .sub { font-size: 12px; text-anchor: middle; }
+  .edge { stroke-width: 1.5px; fill: none; }
+  .band { font-size: 10px; letter-spacing: 0.08em; font-weight: 600; }
+  .legend { font-size: 12px; }
+  .canvas { fill: #FFFFFF; }
+  .build rect { fill: #EEEDFE; stroke: #534AB7; }
+  .build .title { fill: #3C3489; }
+  .build .sub { fill: #534AB7; }
+  .infra rect { fill: #FCFCFB; stroke: #D6D5D1; }
+  .infra .title { fill: #0B0B0B; }
+  .infra .sub { fill: #52514E; }
+  .ext rect { fill: #E1F5EE; stroke: #0F6E56; }
+  .ext .title { fill: #085041; }
+  .ext .sub { fill: #0F6E56; }
+  .edge, .arrowhead { stroke: #898781; }
+  .band, .legend { fill: #52514E; }
+  @media (prefers-color-scheme: dark) {
+  .canvas { fill: #1C1C1B; }
+  .build rect { fill: #1E1A4D; stroke: #C9C5F7; }
+  .build .title { fill: #EEEDFE; }
+  .build .sub { fill: #C9C5F7; }
+  .infra rect { fill: #3A3936; stroke: #898781; }
+  .infra .title { fill: #F1F0EC; }
+  .infra .sub { fill: #D6D5D1; }
+  .ext rect { fill: #0A2E26; stroke: #A8E3CF; }
+  .ext .title { fill: #E1F5EE; }
+  .ext .sub { fill: #A8E3CF; }
+  .edge, .arrowhead { stroke: #898781; }
+  .band, .legend { fill: #D6D5D1; }
+  }
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="arrowhead" d="M2 1L8 5L2 9" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect class="canvas" width="800" height="760" rx="12"/>
+<text class="band" x="24" y="72.0">CLIENTS</text>
+<text class="band" x="24" y="168.0">EDGE</text>
+<text class="band" x="24" y="264.0">CORE</text>
+<text class="band" x="24" y="360.0">SERVICES</text>
+<text class="band" x="24" y="456.0">MESSAGING</text>
+<text class="band" x="24" y="552.0">DATA</text>
+<text class="band" x="24" y="648.0">EXTERNAL</text>
+<g class="node build"><rect x="140.0" y="40" width="311.0" height="56" rx="10"/><text class="title" x="295.5" y="61">Mobile app</text><text class="sub" x="295.5" y="80">Patients and donors, push</text></g>
+<g class="node build"><rect x="469.0" y="40" width="311.0" height="56" rx="10"/><text class="title" x="624.5" y="61">Web portals</text><text class="sub" x="624.5" y="80">Patients, doctors, admins</text></g>
+<g class="node infra"><rect x="140.0" y="136" width="475.5" height="56" rx="10"/><text class="title" x="377.8" y="157">CDN, WAF, API gateway</text><text class="sub" x="377.8" y="176">TLS, rate limits, token checks</text></g>
+<g class="node infra"><rect x="633.5" y="136" width="146.5" height="56" rx="10"/><text class="title" x="706.8" y="157">Identity</text><text class="sub" x="706.8" y="176">Keycloak, MFA</text></g>
+<g class="node build"><rect x="140.0" y="232" width="640.0" height="56" rx="10"/><text class="title" x="460.0" y="253">Core platform (modular monolith)</text><text class="sub" x="460.0" y="272">Accounts, appointments, clinical, billing, referrals, wellbeing</text></g>
+<g class="node build"><rect x="140.0" y="328" width="146.5" height="56" rx="10"/><text class="title" x="213.2" y="349">Donor geo</text><text class="sub" x="213.2" y="368">Matching, PostGIS</text></g>
+<g class="node build"><rect x="304.5" y="328" width="146.5" height="56" rx="10"/><text class="title" x="377.8" y="349">Notifications</text><text class="sub" x="377.8" y="368">SMS, push, email</text></g>
+<g class="node build"><rect x="469.0" y="328" width="146.5" height="56" rx="10"/><text class="title" x="542.2" y="349">AI gateway</text><text class="sub" x="542.2" y="368">Redaction, OCR</text></g>
+<g class="node build"><rect x="633.5" y="328" width="146.5" height="56" rx="10"/><text class="title" x="706.8" y="349">Documents</text><text class="sub" x="706.8" y="368">Scan, store, sign</text></g>
+<g class="node infra"><rect x="140.0" y="424" width="311.0" height="56" rx="10"/><text class="title" x="295.5" y="445">Event bus (Kafka)</text><text class="sub" x="295.5" y="464">Outbox events, retries, DLQ</text></g>
+<g class="node infra"><rect x="469.0" y="424" width="311.0" height="56" rx="10"/><text class="title" x="624.5" y="445">Workflow engine (Temporal)</text><text class="sub" x="624.5" y="464">Blood alerts, referrals, timers</text></g>
+<g class="node infra"><rect x="140.0" y="520" width="146.5" height="56" rx="10"/><text class="title" x="213.2" y="541">PostgreSQL</text><text class="sub" x="213.2" y="560">PostGIS, replicas</text></g>
+<g class="node infra"><rect x="304.5" y="520" width="146.5" height="56" rx="10"/><text class="title" x="377.8" y="541">Redis</text><text class="sub" x="377.8" y="560">Cache, live location</text></g>
+<g class="node infra"><rect x="469.0" y="520" width="146.5" height="56" rx="10"/><text class="title" x="542.2" y="541">Object storage</text><text class="sub" x="542.2" y="560">Encrypted reports</text></g>
+<g class="node infra"><rect x="633.5" y="520" width="146.5" height="56" rx="10"/><text class="title" x="706.8" y="541">Audit store</text><text class="sub" x="706.8" y="560">Append-only</text></g>
+<g class="node ext"><rect x="140.0" y="616" width="146.5" height="56" rx="10"/><text class="title" x="213.2" y="637">SMS gateway</text><text class="sub" x="213.2" y="656">Local aggregator</text></g>
+<g class="node ext"><rect x="304.5" y="616" width="146.5" height="56" rx="10"/><text class="title" x="377.8" y="637">Payments</text><text class="sub" x="377.8" y="656">SSLCommerz, bKash</text></g>
+<g class="node ext"><rect x="469.0" y="616" width="146.5" height="56" rx="10"/><text class="title" x="542.2" y="637">LLM provider</text><text class="sub" x="542.2" y="656">No-training terms</text></g>
+<g class="node ext"><rect x="633.5" y="616" width="146.5" height="56" rx="10"/><text class="title" x="706.8" y="637">Other hospitals</text><text class="sub" x="706.8" y="656">HL7 FHIR</text></g>
+<line class="edge" x1="295.5" y1="96" x2="295.5" y2="134" marker-end="url(#arrow)"/>
+<line class="edge" x1="575.5" y1="96" x2="575.5" y2="134" marker-end="url(#arrow)"/>
+<line class="edge" x1="615.5" y1="164.0" x2="631.5" y2="164.0" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<line class="edge" x1="377.8" y1="192" x2="377.8" y2="230" marker-end="url(#arrow)"/>
+<line class="edge" x1="213.2" y1="288" x2="213.2" y2="326" marker-end="url(#arrow)"/>
+<line class="edge" x1="377.8" y1="288" x2="377.8" y2="326" marker-end="url(#arrow)"/>
+<line class="edge" x1="542.2" y1="288" x2="542.2" y2="326" marker-end="url(#arrow)"/>
+<line class="edge" x1="706.8" y1="288" x2="706.8" y2="326" marker-end="url(#arrow)"/>
+<line class="edge" x1="295.5" y1="386" x2="295.5" y2="422" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<line class="edge" x1="295.5" y1="482" x2="295.5" y2="518" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<line class="edge" x1="624.5" y1="386" x2="624.5" y2="422" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<line class="edge" x1="624.5" y1="482" x2="624.5" y2="518" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<g class="node build"><rect x="140" y="712" width="14" height="14" rx="3"/></g><text class="legend" x="162" y="723">We build</text>
+<g class="node infra"><rect x="320" y="712" width="14" height="14" rx="3"/></g><text class="legend" x="342" y="723">Managed infrastructure</text>
+<g class="node ext"><rect x="500" y="712" width="14" height="14" rx="3"/></g><text class="legend" x="522" y="723">External providers</text>
+</svg>
