@@ -7,10 +7,10 @@ import { humanize } from '../../lib/format'
 
 export function PageHeader({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
-        {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+        <h1 className="text-3xl font-medium text-neutral-900 sm:text-4xl">{title}</h1>
+        {description && <p className="mt-2 text-base text-neutral-600">{description}</p>}
       </div>
       {action}
     </div>
@@ -21,8 +21,8 @@ export function EmptyState({ title, description, action, icon: Icon = Inbox }: {
   return (
     <div className="flex flex-col items-center px-6 py-12 text-center">
       <div className="mb-3 rounded-full bg-brand-50 p-3 text-brand-700"><Icon className="size-6" aria-hidden /></div>
-      <p className="font-medium text-slate-900">{title}</p>
-      {description && <p className="mt-1 max-w-sm text-sm text-slate-500">{description}</p>}
+      <p className="font-medium text-neutral-900">{title}</p>
+      {description && <p className="mt-1 max-w-sm text-sm text-neutral-500">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   )
@@ -31,11 +31,11 @@ export function EmptyState({ title, description, action, icon: Icon = Inbox }: {
 export function StatCard({ label, value, icon: Icon, tone = 'brand' }: { label: string; value: ReactNode; icon: LucideIcon; tone?: 'brand' | 'accent' | 'red' | 'amber' }) {
   const bg = { brand: 'bg-brand-50 text-brand-700', accent: 'bg-accent-50 text-accent-600', red: 'bg-red-50 text-red-600', amber: 'bg-amber-50 text-amber-700' }[tone]
   return (
-    <Card className="flex items-center gap-4 p-5">
-      <div className={`rounded-lg p-2.5 ${bg}`}><Icon className="size-5" aria-hidden /></div>
+    <Card className="flex items-center gap-4 p-6">
+      <div className={`rounded-xl p-3 ${bg}`}><Icon className="size-5" aria-hidden /></div>
       <div>
-        <p className="text-sm text-slate-500">{label}</p>
-        <p className="text-2xl font-semibold text-slate-900">{value}</p>
+        <p className="text-sm text-neutral-500">{label}</p>
+        <p className="text-3xl font-medium tracking-tight text-neutral-900">{value}</p>
       </div>
     </Card>
   )
@@ -43,7 +43,7 @@ export function StatCard({ label, value, icon: Icon, tone = 'brand' }: { label: 
 
 export function Spinner({ label = 'Loading' }: { label?: string }) {
   return (
-    <div role="status" className="flex items-center justify-center gap-2 py-10 text-sm text-slate-500">
+    <div role="status" className="flex items-center justify-center gap-2 py-10 text-sm text-neutral-500">
       <span className="size-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent" aria-hidden />
       {label}…
     </div>
