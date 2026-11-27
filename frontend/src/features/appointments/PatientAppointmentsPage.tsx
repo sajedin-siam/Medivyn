@@ -11,7 +11,7 @@ import { AppointmentItem } from './AppointmentItem'
 
 export function PatientAppointmentsPage() {
   const appts = useQuery({ queryKey: ['appointments'], queryFn: () => api.get<Appointment[]>('/appointments') })
-  const cancel = useAction((id: string) => api.post(`/appointments/${id}/cancel`), { success: 'Appointment cancelled', invalidate: [['appointments']] })
+  const cancel = useAction((id: string) => api.post(`/appointments/${id}/cancel`), { success: 'Appointment cancelled', invalidate: [['appointments'], ['slots']] })
 
   return (
     <>
