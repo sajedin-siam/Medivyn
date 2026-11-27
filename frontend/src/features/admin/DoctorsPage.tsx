@@ -7,11 +7,13 @@ import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 import { Table, Td, Th } from '../../components/ui/table'
 import { useAction } from '../../hooks/useAction'
+import { useConfirm } from '../../hooks/useConfirm'
 import { formatTaka } from '../../lib/format'
 
 export function DoctorsPage() {
   const q = useQuery({ queryKey: ['admin-doctors'], queryFn: () => api.get<Doctor[]>('/admin/doctors') })
   const approve = useAction((id: string) => api.post(`/admin/doctors/${id}/approve`), { success: 'Doctor approved and can now sign in', invalidate: [['admin-doctors'], ['admin-summary']] })
+  const [confirmDialog, ask] = useConfirm()
   const remove = useAction((id: string) => api.del(`/admin/doctors/${id}`), { success: 'Doctor removed', invalidate: [['admin-doctors']] })
 
   return (
@@ -32,7 +34,7 @@ export function DoctorsPage() {
                     <Td className="text-right">
                       <div className="flex justify-end gap-2">
                         {d.status === 'PENDING' && <Button size="sm" loading={approve.isPending && approve.variables === d.id} onClick={() => approve.mutate(d.id)}>Approve</Button>}
-                        <Button size="sm" variant="ghost" onClick={() => confirm(`Remove ${d.name}?`) && remove.mutate(d.id)}>Remove</Button>
+                        <Button size="sm" variant="ghost" onClick={() => ask(`Remove ${d.name}?`, 'Remove doctor', () => remove.mutate(d.id))}>Remove</Button>
                       </div>
                     </Td>
                   </tr>
@@ -42,6 +44,7 @@ export function DoctorsPage() {
           ) : <EmptyState icon={Stethoscope} title="No doctors yet" />}
         </QueryState>
       </Card>
+      {confirmDialog}
     </>
   )
 }

@@ -10,6 +10,7 @@ import { Card, CardBody, CardHeader } from '../../components/ui/card'
 import { Dialog } from '../../components/ui/dialog'
 import { Textarea } from '../../components/ui/form'
 import { useAction } from '../../hooks/useAction'
+import { useConfirm } from '../../hooks/useConfirm'
 import { cn, formatDate } from '../../lib/format'
 import { moodLabel } from '../../lib/mood'
 
@@ -69,6 +70,7 @@ function ShareDialog({ entry, onClose }: { entry: JournalEntry | null; onClose: 
 export function JournalPage() {
   const journal = useQuery({ queryKey: ['journal'], queryFn: () => api.get<JournalEntry[]>('/journal') })
   const [sharing, setSharing] = useState<JournalEntry | null>(null)
+  const [confirmDialog, ask] = useConfirm()
   const del = useAction((id: string) => api.del(`/journal/${id}`), { success: 'Entry deleted', invalidate: [['journal']] })
 
   return (
@@ -93,7 +95,7 @@ export function JournalPage() {
                   <p className="mt-2 whitespace-pre-line text-slate-700">{e.text}</p>
                   <div className="mt-3 flex gap-2">
                     <Button size="sm" variant="ghost" onClick={() => setSharing(e)}><Share2 className="size-4" /> Sharing</Button>
-                    <Button size="sm" variant="ghost" onClick={() => confirm('Delete this entry?') && del.mutate(e.id)}><Trash2 className="size-4" /> Delete</Button>
+                    <Button size="sm" variant="ghost" onClick={() => ask('Delete this journal entry?', 'Delete entry', () => del.mutate(e.id))}><Trash2 className="size-4" /> Delete</Button>
                   </div>
                 </Card>
               ))}
@@ -102,6 +104,7 @@ export function JournalPage() {
         </QueryState>
       </div>
       <ShareDialog key={sharing?.id ?? 'none'} entry={sharing} onClose={() => setSharing(null)} />
+      {confirmDialog}
     </>
   )
 }

@@ -8,10 +8,12 @@ import { Button } from '../../components/ui/button'
 import { buttonClass } from '../../components/ui/buttonClass'
 import { Card, CardHeader } from '../../components/ui/card'
 import { useAction } from '../../hooks/useAction'
+import { useConfirm } from '../../hooks/useConfirm'
 import { AppointmentItem } from './AppointmentItem'
 
 export function PatientAppointmentsPage() {
   const appts = useQuery({ queryKey: ['appointments'], queryFn: () => api.get<Appointment[]>('/appointments') })
+  const [confirmDialog, ask] = useConfirm()
   const cancel = useAction((id: string) => api.post(`/appointments/${id}/cancel`), { success: 'Appointment cancelled', invalidate: [['appointments'], ['slots']] })
 
   return (
@@ -31,7 +33,7 @@ export function PatientAppointmentsPage() {
                       <AppointmentItem key={a.id} a={a} who={`${a.doctorName} · ${a.specialty}`} actions={<>
                         {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer" className={buttonClass('primary', 'sm')}>Join session</a>}
                         <Button size="sm" variant="secondary" loading={cancel.isPending && cancel.variables === a.id}
-                          onClick={() => confirm('Cancel this appointment?') && cancel.mutate(a.id)}>Cancel</Button>
+                          onClick={() => ask('Cancel this appointment?', 'Cancel appointment', () => cancel.mutate(a.id))}>Cancel</Button>
                       </>} />
                     ))}
                   </ul>
@@ -47,6 +49,7 @@ export function PatientAppointmentsPage() {
           )
         }}
       </QueryState>
+      {confirmDialog}
     </>
   )
 }
