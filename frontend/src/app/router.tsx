@@ -39,7 +39,7 @@ function NotFound() {
     <div className="grid min-h-[60vh] place-items-center text-center">
       <div>
         <p className="text-5xl font-bold text-brand-700">404</p>
-        <p className="mt-2 text-slate-600">This page does not exist.</p>
+        <p className="mt-2 text-neutral-600">This page does not exist.</p>
         <Link to="/" className="mt-4 inline-block font-medium text-brand-700 hover:underline">Go home</Link>
       </div>
     </div>

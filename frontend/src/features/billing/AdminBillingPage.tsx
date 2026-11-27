@@ -30,14 +30,14 @@ function CreateBillDialog({ open, onClose }: { open: boolean; onClose: () => voi
   return (
     <Dialog open={open} onClose={onClose} title="Create bill">
       <form onSubmit={handleSubmit((v) => create.mutate(v))} noValidate className="space-y-4">
-        <Field label="Patient" error={errors.patientId?.message}>
+        <Field label="Patient" required error={errors.patientId?.message}>
           <Select defaultValue="" {...register('patientId')}>
             <option value="" disabled>Select patient</option>
             {patients.data?.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.email})</option>)}
           </Select>
         </Field>
-        <Field label="Service" error={errors.description?.message}><Input placeholder="e.g. Cardiology consultation" {...register('description')} /></Field>
-        <Field label="Amount (৳)" error={errors.amount?.message}><Input type="number" min="1" inputMode="numeric" {...register('amount')} /></Field>
+        <Field label="Service" required error={errors.description?.message}><Input placeholder="e.g. Cardiology consultation" {...register('description')} /></Field>
+        <Field label="Amount (৳)" required error={errors.amount?.message}><Input type="number" min="1" inputMode="numeric" {...register('amount')} /></Field>
         <div className="flex justify-end gap-2"><Button type="button" variant="secondary" onClick={onClose}>Cancel</Button><Button type="submit" loading={create.isPending}>Create bill</Button></div>
       </form>
     </Dialog>

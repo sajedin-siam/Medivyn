@@ -6,7 +6,8 @@ export const variants = {
   ghost: 'text-neutral-700 hover:bg-neutral-100 disabled:text-neutral-400',
   danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-600/50',
 }
-export const sizes = { sm: 'h-9 px-3 text-sm', md: 'h-11 px-4 text-sm' }
+// sm grows to 44px on touch screens so it stays easy to hit
+export const sizes = { sm: 'h-10 px-3.5 text-sm pointer-coarse:h-11', md: 'h-11 px-5 text-[15px]' }
 
 /** Button styling for links, so a link never has to wrap a <button>. */
 export const buttonClass = (variant: keyof typeof variants = 'primary', size: keyof typeof sizes = 'md', className?: string) => cn(

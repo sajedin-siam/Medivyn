@@ -28,7 +28,7 @@ export function PatientAppointmentsPage() {
               <Card>
                 <CardHeader title="Upcoming" />
                 {upcoming.length ? (
-                  <ul className="divide-y divide-slate-100">
+                  <ul className="divide-y divide-neutral-100">
                     {upcoming.map((a) => (
                       <AppointmentItem key={a.id} a={a} who={`${a.doctorName} · ${a.specialty}`} actions={<>
                         {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer" className={buttonClass('primary', 'sm')}>Join session</a>}
@@ -42,7 +42,7 @@ export function PatientAppointmentsPage() {
               {past.length > 0 && (
                 <Card>
                   <CardHeader title="Past and cancelled" />
-                  <ul className="divide-y divide-slate-100">{past.map((a) => <AppointmentItem key={a.id} a={a} who={`${a.doctorName} · ${a.specialty}`} />)}</ul>
+                  <ul className="divide-y divide-neutral-100">{past.map((a) => <AppointmentItem key={a.id} a={a} who={`${a.doctorName} · ${a.specialty}`} />)}</ul>
                 </Card>
               )}
             </div>

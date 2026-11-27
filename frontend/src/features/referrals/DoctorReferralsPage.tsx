@@ -17,12 +17,12 @@ import { SERVICES } from './services'
 export function HospitalOption({ h, selected, onSelect }: { h: Hospital; selected?: boolean; onSelect?: () => void }) {
   return (
     <button type="button" onClick={onSelect} disabled={!h.acceptsReferrals} aria-pressed={selected}
-      className={cn('w-full rounded-lg border p-3 text-left disabled:cursor-not-allowed disabled:opacity-50', selected ? 'border-brand-600 bg-brand-50' : 'border-slate-200 hover:border-brand-600')}>
+      className={cn('w-full rounded-lg border p-3 text-left disabled:cursor-not-allowed disabled:opacity-50', selected ? 'border-brand-600 bg-brand-50' : 'border-neutral-200 hover:border-brand-600')}>
       <div className="flex items-center justify-between gap-2">
         <p className="font-medium">{h.name}</p>
         <StatusBadge status={h.capacity} />
       </div>
-      <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><MapPin className="size-3.5" aria-hidden /> {h.area} · {h.distanceKm} km{!h.acceptsReferrals && ' · not accepting referrals'}</p>
+      <p className="mt-1 flex items-center gap-1 text-xs text-neutral-500"><MapPin className="size-3.5" aria-hidden /> {h.area} · {h.distanceKm} km{!h.acceptsReferrals && ' · not accepting referrals'}</p>
     </button>
   )
 }
@@ -44,13 +44,13 @@ function NewReferralDialog({ open, onClose, initialPatient, preset }: {
     <Dialog open={open} onClose={onClose} title="New referral" wide>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); send.mutate(undefined) }}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Patient">
+          <Field label="Patient" required>
             <Select value={patientId} onChange={(e) => setPatientId(e.target.value)} required>
               <option value="" disabled>Select patient</option>
               {patients.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
             </Select>
           </Field>
-          <Field label="Required service">
+          <Field label="Required service" required>
             <Select value={service} onChange={(e) => { setService(e.target.value); setHospitalId('') }} required>
               <option value="" disabled>Select service</option>
               {SERVICES.map((s) => <option key={s}>{s}</option>)}
@@ -59,16 +59,16 @@ function NewReferralDialog({ open, onClose, initialPatient, preset }: {
         </div>
         {service && (
           <fieldset>
-            <legend className="mb-2 text-sm font-medium text-slate-700">Hospitals offering {service} (nearest first)</legend>
+            <legend className="mb-2 text-sm font-medium text-neutral-700">Hospitals offering {service} (nearest first)</legend>
             {hospitals.isPending ? <Spinner /> : hospitals.data?.length ? (
               <div className="grid gap-2 sm:grid-cols-2">
                 {hospitals.data.map((h) => <HospitalOption key={h.id} h={h} selected={hospitalId === h.id} onSelect={() => setHospitalId(h.id)} />)}
               </div>
-            ) : <p className="text-sm text-slate-500">No hospital offers this service.</p>}
+            ) : <p className="text-sm text-neutral-500">No hospital offers this service.</p>}
           </fieldset>
         )}
-        <Field label="Reason and clinical summary"><Textarea value={reason} onChange={(e) => setReason(e.target.value)} required /></Field>
-        <p className="text-xs text-slate-500">If the hospital accepts, the patient’s medical reports are sent to it automatically.</p>
+        <Field label="Reason and clinical summary" required><Textarea value={reason} onChange={(e) => setReason(e.target.value)} required /></Field>
+        <p className="text-xs text-neutral-500">If the hospital accepts, the patient’s medical reports are sent to it automatically.</p>
         <div className="flex justify-end gap-2">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" disabled={!patientId || !hospitalId || !reason.trim()} loading={send.isPending}><Send className="size-4" /> Send referral</Button>
@@ -82,10 +82,10 @@ function AlternativesDialog({ referral, onClose, onPick }: { referral: Referral 
   const alt = useQuery({ queryKey: ['alternatives', referral?.id], queryFn: () => api.get<Hospital[]>(`/referrals/${referral!.id}/alternatives`), enabled: !!referral })
   return (
     <Dialog open={!!referral} onClose={onClose} title="Alternative hospitals">
-      <p className="mb-3 text-sm text-slate-600">Hospitals offering {referral?.service}, ranked by capacity and distance.</p>
+      <p className="mb-3 text-sm text-neutral-600">Hospitals offering {referral?.service}, ranked by capacity and distance.</p>
       {alt.isPending ? <Spinner /> : alt.data?.length ? (
         <div className="space-y-2">{alt.data.map((h) => <HospitalOption key={h.id} h={h} />)}</div>
-      ) : <p className="text-sm text-slate-500">No alternatives found.</p>}
+      ) : <p className="text-sm text-neutral-500">No alternatives found.</p>}
       <div className="mt-4 flex justify-end"><Button onClick={() => referral && onPick(referral)}>Create new referral</Button></div>
     </Dialog>
   )
@@ -105,14 +105,14 @@ export function DoctorReferralsPage() {
         <CardHeader title="Sent referrals" />
         <QueryState query={refs}>
           {(list) => list.length ? (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-neutral-100">
               {list.map((r) => (
                 <li key={r.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{r.patientName} → {r.hospitalName}</p>
-                    <p className="text-sm text-slate-500"><Badge tone="accent">{r.service}</Badge> <span className="ml-1">{formatDate(r.createdAt)}</span></p>
-                    <p className="mt-1 text-sm text-slate-600">{r.reason}</p>
-                    {r.responseNote && <p className="mt-1 text-sm text-slate-800">Hospital: “{r.responseNote}”</p>}
+                    <p className="text-sm text-neutral-500"><Badge tone="accent">{r.service}</Badge> <span className="ml-1">{formatDate(r.createdAt)}</span></p>
+                    <p className="mt-1 text-sm text-neutral-600">{r.reason}</p>
+                    {r.responseNote && <p className="mt-1 text-sm text-neutral-800">Hospital: “{r.responseNote}”</p>}
                   </div>
                   <StatusBadge status={r.status} />
                   {(r.status === 'DECLINED' || r.status === 'MORE_INFO_NEEDED') && (

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Droplet, Lock, MapPin } from 'lucide-react'
+import { Droplet, Lock, MapPin, Siren } from 'lucide-react'
 import { api } from '../../api/client'
 import type { DonorAlert, DonorProfile } from '../../api/types'
 import { EmptyState, PageHeader, QueryState, StatusBadge } from '../../components/common'
@@ -23,14 +23,14 @@ function ProfileCard({ p }: { p: DonorProfile }) {
           <p className="flex items-center gap-2 font-semibold">
             Status: <Badge tone={p.active ? 'success' : 'neutral'}>{p.active ? 'Active' : 'Inactive'}</Badge>
           </p>
-          <p className="mt-1 text-sm text-slate-500">Last donation: {p.lastDonation ? formatDate(p.lastDonation) : 'none recorded'}</p>
+          <p className="mt-1 text-sm text-neutral-500">Last donation: {p.lastDonation ? formatDate(p.lastDonation) : 'none recorded'}</p>
           {recovering && <p className="mt-1 text-sm text-amber-700">Recovery period until {formatDate(p.eligibleFrom!)}. You can set yourself active after that.</p>}
         </div>
         <label className="flex items-center gap-3">
           <span className="text-sm font-medium">Available to donate</span>
           <input type="checkbox" role="switch" className="peer sr-only" checked={p.active} disabled={toggle.isPending || (recovering && !p.active)}
             onChange={(e) => toggle.mutate(e.target.checked)} />
-          <span aria-hidden className="relative h-7 w-12 rounded-full bg-slate-300 transition-colors peer-checked:bg-brand-600 peer-disabled:opacity-50 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 after:absolute after:left-1 after:top-1 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5" />
+          <span aria-hidden className="relative h-7 w-12 rounded-full bg-neutral-300 transition-colors peer-checked:bg-brand-600 peer-disabled:opacity-50 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 after:absolute after:left-1 after:top-1 after:size-5 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-5" />
         </label>
       </CardBody>
     </Card>
@@ -50,18 +50,18 @@ export function DonorPage() {
       <PageHeader title="Blood donation" description="Requests from hospitals near you that match your blood group." />
       <div className="space-y-6">
         <QueryState query={profile}>{(p) => <ProfileCard p={p} />}</QueryState>
-        <p className="flex items-center gap-2 text-sm text-slate-500"><Lock className="size-4" aria-hidden /> Your location is used only for matching. It is never shown to patients, hospitals or other donors.</p>
+        <p className="flex items-center gap-2 text-sm text-neutral-500"><Lock className="size-4" aria-hidden /> Your location is used only for matching. It is never shown to patients, hospitals or other donors.</p>
         <Card>
           <CardHeader title="Requests" />
           <QueryState query={alerts}>
             {(list) => list.length ? (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-neutral-100">
                 {list.map((a) => (
                   <li key={a.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
                     <div className="grid size-12 place-items-center rounded-xl bg-red-50 font-bold text-red-700">{a.bloodGroup}</div>
                     <div className="min-w-0 flex-1">
-                      <p className="flex flex-wrap items-center gap-2 font-medium">{a.units} unit{a.units > 1 ? 's' : ''} at {a.hospital} {a.urgent && <Badge tone="danger">Urgent</Badge>}</p>
-                      <p className="flex items-center gap-1 text-sm text-slate-500"><MapPin className="size-3.5" aria-hidden /> {a.area} · {formatDateTime(a.createdAt)}</p>
+                      <p className="flex flex-wrap items-center gap-2 font-medium">{a.units} unit{a.units > 1 ? 's' : ''} at {a.hospital} {a.urgent && <Badge tone="danger" icon={Siren}>Urgent</Badge>}</p>
+                      <p className="flex items-center gap-1 text-sm text-neutral-500"><MapPin className="size-3.5" aria-hidden /> {a.area} · {formatDateTime(a.createdAt)}</p>
                     </div>
                     {a.response === 'PENDING' ? (
                       <div className="flex gap-2">

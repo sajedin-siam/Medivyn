@@ -23,13 +23,13 @@ function SendDialog({ report, onClose }: { report: MedicalReport | null; onClose
   return (
     <Dialog open={!!report} onClose={onClose} title={`Send ${report?.fileName ?? ''}`}>
       <div className="space-y-4">
-        <Field label="Hospital">
+        <Field label="Hospital" required>
           <Select value={hospitalId} onChange={(e) => setHospitalId(e.target.value)}>
             <option value="" disabled>Select hospital</option>
             {hospitals.data?.map((h) => <option key={h.id} value={h.id}>{h.name} ({h.area})</option>)}
           </Select>
         </Field>
-        <p className="text-xs text-slate-500">Only this hospital will be able to view the report.</p>
+        <p className="text-xs text-neutral-500">Only this hospital will be able to view the report.</p>
         <div className="flex justify-end gap-2"><Button variant="secondary" onClick={onClose}>Cancel</Button><Button disabled={!hospitalId} loading={send.isPending} onClick={() => send.mutate(undefined)}>Send report</Button></div>
       </div>
     </Dialog>
@@ -67,13 +67,13 @@ export function ReportsPage() {
                   <div className="rounded-lg bg-accent-50 p-2.5 text-accent-600"><FileText className="size-5" aria-hidden /></div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{r.fileName}</p>
-                    <p className="text-xs text-slate-500">Uploaded {formatDate(r.uploadedAt)}</p>
+                    <p className="text-xs text-neutral-500">Uploaded {formatDate(r.uploadedAt)}</p>
                   </div>
                 </div>
-                <div className="mt-4 flex-1 rounded-lg bg-slate-50 p-3 text-sm">
+                <div className="mt-4 flex-1 rounded-lg bg-neutral-50 p-3 text-sm">
                   <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-accent-600"><Sparkles className="size-3.5" aria-hidden /> AI summary</p>
-                  {r.aiSummary ? <p className="text-slate-700">{r.aiSummary}</p> : <p className="text-slate-500">Summary unavailable right now. Your report is saved and can still be viewed and sent.</p>}
-                  <p className="mt-2 text-xs text-slate-400">Assistive only. Not a diagnosis.</p>
+                  {r.aiSummary ? <p className="text-neutral-700">{r.aiSummary}</p> : <p className="text-neutral-500">Summary unavailable right now. Your report is saved and can still be viewed and sent.</p>}
+                  <p className="mt-2 text-xs font-medium text-neutral-600">Assistive only. Not a diagnosis.</p>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   {r.sentTo.map((h) => <Badge key={h} tone="success">Sent to {h}</Badge>)}

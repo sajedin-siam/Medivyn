@@ -34,17 +34,17 @@ export function RecordDialog({ appointment, onClose }: { appointment: Appointmen
   return (
     <Dialog open={!!appointment} onClose={onClose} title={`Diagnosis for ${appointment?.patientName ?? ''}`} wide>
       <form onSubmit={handleSubmit((v) => save.mutate(v))} noValidate className="space-y-4">
-        <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">Reason for visit: {appointment?.reason}</p>
-        <Field label="Diagnosis" error={errors.diagnosis?.message}><Input {...register('diagnosis')} /></Field>
+        <p className="rounded-lg bg-neutral-50 px-3 py-2 text-sm text-neutral-600">Reason for visit: {appointment?.reason}</p>
+        <Field label="Diagnosis" required error={errors.diagnosis?.message}><Input {...register('diagnosis')} /></Field>
         <Field label="Notes and advice"><Textarea {...register('notes')} /></Field>
 
         <fieldset className="space-y-3">
-          <legend className="text-sm font-medium text-slate-700">Prescription</legend>
+          <legend className="text-sm font-medium text-neutral-700">Prescription</legend>
           {rx.fields.map((f, i) => (
             <div key={f.id} className="grid grid-cols-[1fr_1fr_1fr_auto] items-end gap-2">
-              <Field label="Medicine" error={errors.prescriptions?.[i]?.medicine?.message}><Input {...register(`prescriptions.${i}.medicine`)} /></Field>
-              <Field label="Dosage" error={errors.prescriptions?.[i]?.dosage?.message}><Input placeholder="1 tablet twice daily" {...register(`prescriptions.${i}.dosage`)} /></Field>
-              <Field label="Duration" error={errors.prescriptions?.[i]?.duration?.message}><Input placeholder="7 days" {...register(`prescriptions.${i}.duration`)} /></Field>
+              <Field label="Medicine" required error={errors.prescriptions?.[i]?.medicine?.message}><Input {...register(`prescriptions.${i}.medicine`)} /></Field>
+              <Field label="Dosage" required error={errors.prescriptions?.[i]?.dosage?.message}><Input placeholder="1 tablet twice daily" {...register(`prescriptions.${i}.dosage`)} /></Field>
+              <Field label="Duration" required error={errors.prescriptions?.[i]?.duration?.message}><Input placeholder="7 days" {...register(`prescriptions.${i}.duration`)} /></Field>
               <Button type="button" variant="ghost" size="sm" className="mb-1" onClick={() => rx.remove(i)} aria-label={`Remove medicine ${i + 1}`}><Trash2 className="size-4" /></Button>
             </div>
           ))}
@@ -53,7 +53,7 @@ export function RecordDialog({ appointment, onClose }: { appointment: Appointmen
           </Button>
         </fieldset>
 
-        <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
+        <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={save.isPending}>Save and complete visit</Button>
         </div>

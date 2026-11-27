@@ -54,24 +54,24 @@ export function RegisterPage() {
                   ))}
                 </div>
               </fieldset>
-              <Field label="Full name" error={errors.name?.message}><Input autoComplete="name" {...register('name')} /></Field>
-              <Field label="Email" error={errors.email?.message}><Input type="email" autoComplete="email" {...register('email')} /></Field>
+              <Field label="Full name" required error={errors.name?.message}><Input autoComplete="name" {...register('name')} /></Field>
+              <Field label="Email" required error={errors.email?.message}><Input type="email" autoComplete="email" {...register('email')} /></Field>
               {role === 'DONOR' && (
-                <Field label="Blood group" error={errors.bloodGroup?.message} hint="Your location is only used for matching and is never shown to anyone.">
+                <Field label="Blood group" required error={errors.bloodGroup?.message} hint="Your location is only used for matching and is never shown to anyone.">
                   <Select {...register('bloodGroup')} defaultValue=""><option value="" disabled>Select</option>{BLOOD_GROUPS.map((g) => <option key={g}>{g}</option>)}</Select>
                 </Field>
               )}
               {role === 'DOCTOR' && (
-                <Field label="Specialty" error={errors.specialty?.message} hint="Doctor accounts stay pending until a hospital admin approves them.">
+                <Field label="Specialty" required error={errors.specialty?.message} hint="Doctor accounts stay pending until a hospital admin approves them.">
                   <Input placeholder="e.g. Cardiology" {...register('specialty')} />
                 </Field>
               )}
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Password" error={errors.password?.message}><Input type="password" autoComplete="new-password" {...register('password')} /></Field>
-                <Field label="Confirm password" error={errors.confirm?.message}><Input type="password" autoComplete="new-password" {...register('confirm')} /></Field>
+                <Field label="Password" required error={errors.password?.message}><Input type="password" autoComplete="new-password" {...register('password')} /></Field>
+                <Field label="Confirm password" required error={errors.confirm?.message}><Input type="password" autoComplete="new-password" {...register('confirm')} /></Field>
               </div>
               <Button type="submit" className="w-full" loading={submit.isPending}>Create account</Button>
-              <p className="text-center text-sm text-slate-600">Already registered? <Link to="/login" className="font-medium text-brand-700 hover:underline">Sign in</Link></p>
+              <p className="text-center text-sm text-neutral-600">Already registered? <Link to="/login" className="font-medium text-brand-700 hover:underline">Sign in</Link></p>
             </form>
           )}
         </Card>

@@ -35,13 +35,13 @@ export function BookDialog({ doctor, onClose }: { doctor: Doctor | null; onClose
     <Dialog open={!!doctor} onClose={onClose} title={doctor ? `Book with ${doctor.name}` : ''}>
       {doctor && (
         <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); book.mutate(undefined) }}>
-          <p className="text-sm text-slate-600">{doctor.specialty} · {doctor.hospital} · Fee {formatTaka(doctor.fee)}</p>
+          <p className="text-sm text-neutral-600">{doctor.specialty} · {doctor.hospital} · Fee {formatTaka(doctor.fee)}</p>
 
           <fieldset>
-            <legend className="mb-2 text-sm font-medium text-slate-700">Visit type</legend>
+            <legend className="mb-2 text-sm font-medium text-neutral-700">Visit type</legend>
             <div className="grid grid-cols-2 gap-2">
               {([['IN_PERSON', 'In person', Building], ['ONLINE', 'Online session', Video]] as const).map(([v, label, Icon]) => (
-                <label key={v} className={cn('flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium', type === v ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-slate-200 text-slate-600')}>
+                <label key={v} className={cn('flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-600', type === v ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-neutral-200 text-neutral-600')}>
                   <input type="radio" name="type" className="sr-only" checked={type === v} onChange={() => setType(v)} />
                   <Icon className="size-4" aria-hidden /> {label}
                 </label>
@@ -49,25 +49,25 @@ export function BookDialog({ doctor, onClose }: { doctor: Doctor | null; onClose
             </div>
           </fieldset>
 
-          <Field label="Date">
+          <Field label="Date" required>
             <Input type="date" min={today()} value={date} onChange={(e) => { setDate(e.target.value); setSlot(null) }} />
           </Field>
 
           <fieldset>
-            <legend className="mb-2 text-sm font-medium text-slate-700">Available times</legend>
-            {slots.isPending ? <p className="text-sm text-slate-500">Loading times…</p> : slots.data?.length ? (
+            <legend className="mb-2 text-sm font-medium text-neutral-700">Available times</legend>
+            {slots.isPending ? <p className="text-sm text-neutral-500">Loading times…</p> : slots.data?.length ? (
               <div className="grid grid-cols-4 gap-2">
                 {slots.data.map((s) => (
                   <button type="button" key={s} onClick={() => setSlot(s)} aria-pressed={slot === s}
-                    className={cn('rounded-lg border px-2 py-2 text-sm', slot === s ? 'border-brand-700 bg-brand-700 text-white' : 'border-slate-200 hover:border-brand-600')}>
+                    className={cn('rounded-lg border px-2 py-2 text-sm', slot === s ? 'border-brand-700 bg-brand-700 text-white' : 'border-neutral-200 hover:border-brand-600')}>
                     {formatTime(s)}
                   </button>
                 ))}
               </div>
-            ) : <p className="text-sm text-slate-500">No free times on this day. Try another date.</p>}
+            ) : <p className="text-sm text-neutral-500">No free times on this day. Try another date.</p>}
           </fieldset>
 
-          <Field label="Reason for visit">
+          <Field label="Reason for visit" required>
             <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Briefly describe your symptoms" required />
           </Field>
 

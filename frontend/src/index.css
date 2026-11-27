@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
-/* Design tokens: the landing page's palette (white ground, one blue accent) and type (Urbanist).
+/* Design tokens: the landing page's palette (white ground, one blue accent).
+   Type is Atkinson Hyperlegible Next, drawn for low-vision readers: patients may be unwell, older or on a phone.
    Token names stay brand-* and accent-* so every screen picks them up. */
 @theme {
   --color-brand-50: #eef2fe;
@@ -20,7 +21,7 @@
 
   --radius-xl: 1.25rem;
 
-  --font-sans: 'Urbanist', 'Hind Siliguri', 'Noto Sans Bengali', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next', 'Hind Siliguri', 'Noto Sans Bengali', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -28,7 +29,11 @@
     @apply bg-neutral-50 text-neutral-900 antialiased;
   }
   h1, h2 {
-    letter-spacing: -0.03em;
+    letter-spacing: -0.015em;
+  }
+  /* Tailwind 4 resets buttons to the default cursor */
+  button:not(:disabled), [role='button'] {
+    cursor: pointer;
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-600;

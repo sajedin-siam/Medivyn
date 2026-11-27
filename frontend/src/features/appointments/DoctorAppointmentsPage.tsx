@@ -18,7 +18,7 @@ function PatientHistoryDialog({ patient, onClose }: { patient: { id: string; nam
   const q = useQuery({ queryKey: ['patient-records', patient?.id], queryFn: () => api.get<MedicalRecord[]>(`/patients/${patient!.id}/records`), enabled: !!patient })
   return (
     <Dialog open={!!patient} onClose={onClose} title={`History: ${patient?.name ?? ''}`} wide>
-      {q.isPending ? <Spinner /> : q.data?.length ? <RecordList records={q.data} /> : <p className="text-sm text-slate-500">No previous records.</p>}
+      {q.isPending ? <Spinner /> : q.data?.length ? <RecordList records={q.data} /> : <p className="text-sm text-neutral-500">No previous records.</p>}
     </Dialog>
   )
 }
@@ -52,7 +52,7 @@ export function DoctorAppointmentsPage() {
               {groups.filter(([, items]) => items.length).map(([title, items]) => (
                 <Card key={title}>
                   <CardHeader title={title} description={`${items.length} appointment${items.length > 1 ? 's' : ''}`} />
-                  <ul className="divide-y divide-slate-100">
+                  <ul className="divide-y divide-neutral-100">
                     {items.map((a) => <AppointmentItem key={a.id} a={a} who={a.patientName} actions={a.status === 'BOOKED' ? actions(a) : undefined} />)}
                   </ul>
                 </Card>

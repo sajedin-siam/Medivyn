@@ -18,9 +18,9 @@ export function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard label="Appointments this month" value={s.appointmentsThisMonth} icon={CalendarDays} />
-              <StatCard label="Revenue collected" value={formatTaka(s.revenuePaid)} icon={Receipt} tone="accent" />
-              <StatCard label="Unpaid bills" value={formatTaka(s.revenueUnpaid)} icon={Receipt} tone="amber" />
-              <StatCard label="Open blood requests" value={s.openBloodRequests} icon={Droplet} tone="red" />
+              <StatCard label="Revenue collected" value={formatTaka(s.revenuePaid)} icon={Receipt} tone="accent" to="/admin/billing" />
+              <StatCard label="Unpaid bills" value={formatTaka(s.revenueUnpaid)} icon={Receipt} tone="amber" to="/admin/billing" />
+              <StatCard label="Open blood requests" value={s.openBloodRequests} icon={Droplet} tone="red" to="/admin/blood" />
             </div>
             {s.pendingDoctors > 0 && (
               <Link to="/admin/doctors" className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900 hover:bg-amber-100">
@@ -47,7 +47,7 @@ export function AdminDashboardPage() {
               </Card>
               <Card>
                 <CardHeader title="Referrals" action={<Link to="/admin/referrals" className="text-sm font-medium text-brand-700 hover:underline">View</Link>} />
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-neutral-100">
                   {Object.entries(s.referrals).map(([status, n]) => (
                     <li key={status} className="flex items-center justify-between px-5 py-3"><StatusBadge status={status} /><span className="font-semibold">{n}</span></li>
                   ))}
