@@ -149,8 +149,20 @@ const routes: [string, string, Handler][] = [
     const bill = db.bills.find((x) => x.id === p.id) ?? fail(404, 'Not found')
     if (bill.patientId !== u.id) fail(403, 'Forbidden')
     if (bill.status === 'PAID') fail(409, 'This bill is already paid')
+    // cash is paid at the counter; staff mark it paid through /admin/bills/:id/mark-paid
+    if (b.method === 'CASH') return bill
+    // mock: stands in for the gateway's confirmation. The real endpoint returns redirectUrl
+    // and marks the bill PAID only when SSLCommerz or bKash confirms the payment.
     bill.status = 'PAID'; bill.paidWith = b.method
     audit('Paid bill', bill.description)
+    return bill
+  }],
+  ['POST', '/admin/bills/:id/mark-paid', (p) => {
+    requireRole('HOSPITAL_ADMIN')
+    const bill = db.bills.find((x) => x.id === p.id) ?? fail(404, 'Not found')
+    if (bill.status === 'PAID') fail(409, 'This bill is already paid')
+    bill.status = 'PAID'; bill.paidWith = 'CASH'
+    audit('Marked bill paid (cash)', `${bill.description} (${bill.patientName})`)
     return bill
   }],
 

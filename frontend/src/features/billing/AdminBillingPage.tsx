@@ -46,6 +46,7 @@ function CreateBillDialog({ open, onClose }: { open: boolean; onClose: () => voi
 export function AdminBillingPage() {
   const bills = useQuery({ queryKey: ['bills'], queryFn: () => api.get<Bill[]>('/bills') })
   const [open, setOpen] = useState(false)
+  const markPaid = useAction((id: string) => api.post(`/admin/bills/${id}/mark-paid`), { success: 'Bill marked paid', invalidate: [['bills']] })
   const [filter, setFilter] = useState<'ALL' | 'UNPAID' | 'PAID'>('ALL')
   return (
     <>
@@ -61,9 +62,10 @@ export function AdminBillingPage() {
             const rows = list.filter((b) => filter === 'ALL' || b.status === filter)
             return rows.length ? (
               <Table>
-                <thead><tr><Th>Date</Th><Th>Patient</Th><Th>Service</Th><Th>Amount</Th><Th>Status</Th></tr></thead>
+                <thead><tr><Th>Date</Th><Th>Patient</Th><Th>Service</Th><Th>Amount</Th><Th>Status</Th><Th><span className="sr-only">Action</span></Th></tr></thead>
                 <tbody>{rows.map((b) => (
-                  <tr key={b.id}><Td>{formatDate(b.createdAt)}</Td><Td className="font-medium">{b.patientName}</Td><Td>{b.description}</Td><Td>{formatTaka(b.amount)}</Td><Td><StatusBadge status={b.status} /></Td></tr>
+                  <tr key={b.id}><Td>{formatDate(b.createdAt)}</Td><Td className="font-medium">{b.patientName}</Td><Td>{b.description}</Td><Td>{formatTaka(b.amount)}</Td><Td><StatusBadge status={b.status} /></Td>
+                    <Td className="text-right">{b.status === 'UNPAID' && <Button size="sm" variant="secondary" loading={markPaid.isPending && markPaid.variables === b.id} onClick={() => confirm(`Mark ${b.description} for ${b.patientName} as paid in cash?`) && markPaid.mutate(b.id)}>Mark paid (cash)</Button>}</Td></tr>
                 ))}</tbody>
               </Table>
             ) : <EmptyState icon={Receipt} title="No bills" />

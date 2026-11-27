@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { Appointment, BloodRequest, DonorProfile } from '../api/types'
+import type { Appointment, Bill, BloodRequest, DonorProfile } from '../api/types'
 import { DEMO_USERS } from './data'
 import { localDate } from '../lib/format'
 import { mockFetch, resetMockDb, setMockUser } from './server'
@@ -32,6 +32,13 @@ describe('mock API business rules', () => {
     await expect(mockFetch('PUT', '/journal/j1', { sharedWith: [] })).rejects.toMatchObject({ status: 404 })
     setMockUser(null)
     await expect(mockFetch('POST', '/bills/b2/pay', { method: 'CARD' })).rejects.toMatchObject({ status: 401 })
+  })
+
+  it('leaves a cash bill unpaid until staff mark it paid', async () => {
+    as('PATIENT')
+    expect((await mockFetch<Bill>('POST', '/bills/b2/pay', { method: 'CASH' })).status).toBe('UNPAID')
+    as('HOSPITAL_ADMIN')
+    expect((await mockFetch<Bill>('POST', '/admin/bills/b2/mark-paid')).status).toBe('PAID')
   })
 
   it('lets an admin answer only pending referrals sent to their hospital', async () => {
