@@ -12,6 +12,9 @@ const day = (offset: number, hour = 10) => {
   return d.toISOString()
 }
 
+/** Every demo account uses this password in mock mode. */
+export const DEMO_PASSWORD = 'demo1234'
+
 export const DEMO_USERS: User[] = [
   { id: 'p1', name: 'Ayesha Rahman', email: 'patient@demo.test', role: 'PATIENT' },
   { id: 'd1', name: 'Dr. Tanvir Hasan', email: 'doctor@demo.test', role: 'DOCTOR' },

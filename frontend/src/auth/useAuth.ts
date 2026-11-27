@@ -1,11 +1,13 @@
 import { createContext, useContext } from 'react'
 import type { Role, User } from '../api/types'
 
+export type LoginInput = { username: string; password: string } | 'google'
+
 export interface AuthState {
   user: User | null
   ready: boolean
-  /** In mock mode the role picks a demo account; in live mode it redirects to Keycloak. */
-  login: (role?: Role) => Promise<void>
+  /** Signs in with email + password, or redirects to Google. Throws an Error with a user-facing message on failure. */
+  login: (input: LoginInput) => Promise<void>
   logout: () => Promise<void>
 }
 
