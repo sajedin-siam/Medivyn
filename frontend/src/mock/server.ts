@@ -8,7 +8,8 @@ import { ApiError } from '../api/errors'
 import { localDate } from '../lib/format'
 import { seed, type MockDb } from './data'
 
-const STORE_KEY = 'mediconnect-mock-db'
+// bump the version whenever seed() changes shape, so saved demo data from an older build is dropped
+const STORE_KEY = 'mediconnect-mock-db-v2'
 const ADMIN_HOSPITAL = 'h1'
 
 let db: MockDb = load()
