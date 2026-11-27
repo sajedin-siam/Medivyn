@@ -10,6 +10,6 @@ export const sizes = { sm: 'h-9 px-3 text-sm', md: 'h-11 px-4 text-sm' }
 
 /** Button styling for links, so a link never has to wrap a <button>. */
 export const buttonClass = (variant: keyof typeof variants = 'primary', size: keyof typeof sizes = 'md', className?: string) => cn(
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,box-shadow,transform] duration-150 enabled:hover:-translate-y-px enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,box-shadow,transform] duration-150 not-disabled:hover:-translate-y-px not-disabled:active:translate-y-0 not-disabled:active:scale-[0.98] disabled:cursor-not-allowed',
   variants[variant], sizes[size], className,
 )
