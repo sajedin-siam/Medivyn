@@ -10,6 +10,8 @@ import { Card } from '../../components/ui/card'
 import { cn } from '../../lib/format'
 
 const GREETING: ChatMessage = { role: 'assistant', text: 'Hi, I am here to listen. How are you feeling today? You can also ask general questions about sleep, stress or healthy habits.' }
+// the model sees only recent context, so each request stays the same size however long the chat runs
+const HISTORY_SENT = 20
 const SUGGESTIONS = ['I have trouble sleeping', 'I feel stressed about work', 'Tips for a healthier routine']
 
 export function ChatPage() {
@@ -28,7 +30,7 @@ export function ChatPage() {
     const history = [...messages, { role: 'user' as const, text: t.trim() }]
     setMessages(history)
     setText('')
-    send.mutate(history)
+    send.mutate(history.slice(-HISTORY_SENT))
   }
 
   return (
