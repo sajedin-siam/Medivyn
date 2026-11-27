@@ -61,18 +61,6 @@ export function Logo({ light }: { light?: boolean }) {
   )
 }
 
-export function LanguageToggle() {
-  const { t, i18n } = useTranslation()
-  return (
-    <button
-      onClick={() => i18n.changeLanguage(i18n.language === 'bn' ? 'en' : 'bn')}
-      className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
-    >
-      {t('common.language')}
-    </button>
-  )
-}
-
 export function AppLayout() {
   const { user, logout } = useAuth()
   const { t } = useTranslation()
@@ -131,7 +119,6 @@ export function AppLayout() {
           <button onClick={() => setMenuOpen(true)} aria-label="Open menu" className="rounded-md p-2 hover:bg-neutral-100 lg:hidden"><Menu className="size-5" /></button>
           <div className="lg:hidden"><Logo /></div>
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            <LanguageToggle />
             <NotificationBell />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium leading-tight">{user.name}</p>
