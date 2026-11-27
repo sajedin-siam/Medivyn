@@ -35,7 +35,9 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     const msg = await res.json().then((j) => j.message as string, () => res.statusText)
     throw new ApiError(res.status, msg || 'Request failed')
   }
-  return res.status === 204 ? (undefined as T) : res.json()
+  // Spring's void handlers answer 200 with an empty body, not 204
+  const text = await res.text()
+  return (text ? JSON.parse(text) : undefined) as T
 }
 
 export const api = {
