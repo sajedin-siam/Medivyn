@@ -351,9 +351,12 @@ const routes: [string, string, Handler][] = [
   }],
   ['DELETE', '/admin/doctors/:id', (p) => {
     requireRole('HOSPITAL_ADMIN')
-    const d = db.doctors.find((x) => x.id === p.id)
+    const d = db.doctors.find((x) => x.id === p.id) ?? fail(404, 'Not found')
+    // records and referrals keep the doctor's name, but booked visits would point at nobody
+    const booked = db.appointments.filter((a) => a.doctorId === d.id && a.status === 'BOOKED').length
+    if (booked) fail(409, `${d.name} still has ${booked} booked appointment${booked > 1 ? 's' : ''}. Cancel or move them first.`)
     db.doctors = db.doctors.filter((x) => x.id !== p.id)
-    if (d) audit('Removed doctor', d.name)
+    audit('Removed doctor', d.name)
   }],
   ['GET', '/admin/departments', () => {
     requireRole('HOSPITAL_ADMIN')

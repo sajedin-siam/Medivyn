@@ -59,6 +59,13 @@ describe('API business rules', () => {
     expect(s.appointmentsByWeek.reduce((n, w) => n + w.count, 0)).toBe(5)
   })
 
+  it('keeps a doctor with booked appointments', async () => {
+    as('HOSPITAL_ADMIN')
+    await expect(call('DELETE', '/admin/doctors/d1')).rejects.toMatchObject({ status: 409 })
+    await call('DELETE', '/admin/doctors/d3')
+    expect((await call<{ id: string }[]>('GET', '/admin/doctors')).map((d) => d.id)).not.toContain('d3')
+  })
+
   it('blocks other roles from admin endpoints', async () => {
     as('DONOR')
     await expect(call('GET', '/admin/doctors')).rejects.toMatchObject({ status: 403 })
