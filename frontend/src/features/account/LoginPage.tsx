@@ -44,9 +44,16 @@ export function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-neutral-50 px-4 py-10">
-      <div className="w-full max-w-md">
-        <div className="mb-6 flex justify-center"><Link to="/"><Logo /></Link></div>
+    // reduced-motion users get the poster as a still background instead of the video
+    <div className="relative grid min-h-screen place-items-center bg-neutral-900 bg-[url(/assets/video/login-bg.jpg)] bg-cover bg-center px-4 py-10">
+      <video
+        className="absolute inset-0 size-full object-cover motion-reduce:hidden"
+        src="/assets/video/login-bg.mp4" poster="/assets/video/login-bg.jpg"
+        autoPlay muted loop playsInline aria-hidden
+      />
+      <div className="absolute inset-0 bg-neutral-950/55" />
+      <div className="relative w-full max-w-md">
+        <div className="mb-6 flex justify-center"><Link to="/" className="rounded-full bg-white px-4 py-2 shadow-sm"><Logo /></Link></div>
         <Card className="p-8">
           <h1 className="text-3xl font-medium">{t('login.title')}</h1>
           <form
