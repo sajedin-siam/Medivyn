@@ -38,6 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(appUser)
         }
         if (window.location.pathname === '/auth/callback') window.history.replaceState(null, '', '/')
+      } catch {
+        // e.g. the callback page was reloaded and its one-time login state is gone: start over at sign-in
+        window.history.replaceState(null, '', '/login')
       } finally {
         setReady(true)
       }
