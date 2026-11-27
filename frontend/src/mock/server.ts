@@ -98,7 +98,10 @@ const routes: [string, string, Handler][] = [
     return appt
   }],
   ['POST', '/appointments/:id/cancel', (p) => {
+    const u = requireRole('PATIENT')
     const a = db.appointments.find((x) => x.id === p.id) ?? fail(404, 'Not found')
+    if (a.patientId !== u.id) fail(403, 'Forbidden')
+    if (a.status !== 'BOOKED') fail(409, 'Only booked appointments can be cancelled')
     a.status = 'CANCELLED'
     return a
   }],
@@ -142,7 +145,9 @@ const routes: [string, string, Handler][] = [
     return bill
   }],
   ['POST', '/bills/:id/pay', (p, b: { method: PaymentMethod }) => {
+    const u = requireRole('PATIENT')
     const bill = db.bills.find((x) => x.id === p.id) ?? fail(404, 'Not found')
+    if (bill.patientId !== u.id) fail(403, 'Forbidden')
     if (bill.status === 'PAID') fail(409, 'This bill is already paid')
     bill.status = 'PAID'; bill.paidWith = b.method
     audit('Paid bill', bill.description)
@@ -163,7 +168,9 @@ const routes: [string, string, Handler][] = [
     return rep
   }],
   ['POST', '/reports/:id/send', (p, b) => {
+    const u = requireRole('PATIENT')
     const rep = db.reports.find((r) => r.id === p.id) ?? fail(404, 'Not found')
+    if (rep.patientId !== u.id) fail(403, 'Forbidden')
     const h = db.hospitals.find((x) => x.id === b.hospitalId) ?? fail(404, 'Hospital not found')
     if (!rep.sentTo.includes(h.name)) rep.sentTo.push(h.name)
     return rep
@@ -191,6 +198,9 @@ const routes: [string, string, Handler][] = [
   ['POST', '/referrals/:id/respond', (p, b: { status: ReferralStatus; note?: string }) => {
     requireRole('HOSPITAL_ADMIN')
     const ref = db.referrals.find((r) => r.id === p.id) ?? fail(404, 'Not found')
+    if (ref.hospitalId !== ADMIN_HOSPITAL) fail(403, 'This referral was sent to another hospital')
+    if (ref.status !== 'PENDING') fail(409, 'This referral has already been answered')
+    if (!['ACCEPTED', 'DECLINED', 'MORE_INFO_NEEDED'].includes(b.status)) fail(400, 'Invalid status')
     ref.status = b.status; ref.responseNote = b.note
     if (b.status === 'ACCEPTED') {
       const h = db.hospitals.find((x) => x.id === ref.hospitalId)!
@@ -202,6 +212,7 @@ const routes: [string, string, Handler][] = [
     return ref
   }],
   ['GET', '/referrals/:id/alternatives', (p) => {
+    requireRole('DOCTOR')
     const ref = db.referrals.find((r) => r.id === p.id) ?? fail(404, 'Not found')
     const rank = { AVAILABLE: 0, LIMITED: 1, UNCONFIRMED: 2 }
     return db.hospitals.filter((h) => h.id !== ref.hospitalId && h.acceptsReferrals && h.services.includes(ref.service))
@@ -233,7 +244,10 @@ const routes: [string, string, Handler][] = [
     return req
   }],
   ['POST', '/blood-requests/:id/cancel', (p) => {
+    const u = requireRole('PATIENT', 'HOSPITAL_ADMIN')
     const r = db.bloodRequests.find((x) => x.id === p.id) ?? fail(404, 'Not found')
+    if (u.role !== 'HOSPITAL_ADMIN' && r.requesterName !== u.name) fail(403, 'Forbidden')
+    if (r.status !== 'OPEN') fail(409, 'This request is no longer open')
     r.status = 'CANCELLED'
     return r
   }],
@@ -273,27 +287,32 @@ const routes: [string, string, Handler][] = [
   }],
 
   // Wellbeing
-  ['GET', '/journal', () => { requireRole('PATIENT'); return [...db.journal].sort((a, b) => b.date.localeCompare(a.date)) }],
+  ['GET', '/journal', () => { const u = requireRole('PATIENT'); return db.journal.filter((e) => e.patientId === u.id).sort((a, b) => b.date.localeCompare(a.date)) }],
   ['POST', '/journal', (_p, b) => {
-    requireRole('PATIENT')
-    const e: JournalEntry = { id: id('j'), date: now(), sharedWith: [], ...b }
+    const u = requireRole('PATIENT')
+    const e: JournalEntry = { id: id('j'), patientId: u.id, date: now(), sharedWith: [], mood: b.mood, text: b.text }
     db.journal.push(e)
     return e
   }],
-  ['PUT', '/journal/:id', (p, b: Partial<JournalEntry>) => {
-    const e = db.journal.find((x) => x.id === p.id) ?? fail(404, 'Not found')
-    Object.assign(e, b)
+  ['PUT', '/journal/:id', (p, b: Pick<JournalEntry, 'sharedWith'>) => {
+    const u = requireRole('PATIENT')
+    const e = db.journal.find((x) => x.id === p.id && x.patientId === u.id) ?? fail(404, 'Not found')
+    e.sharedWith = b.sharedWith
     return e
   }],
-  ['DELETE', '/journal/:id', (p) => { db.journal = db.journal.filter((x) => x.id !== p.id) }],
+  ['DELETE', '/journal/:id', (p) => {
+    const u = requireRole('PATIENT')
+    db.journal = db.journal.filter((x) => !(x.id === p.id && x.patientId === u.id))
+  }],
   ['GET', '/doctor/shared-journal', () => {
     const u = requireRole('DOCTOR')
     // demo: Dr. Tanvir also sees entries shared with the psychiatrist so the chart has data
     return db.journal.filter((e) => e.sharedWith.includes(u.id) || e.sharedWith.includes('d2'))
-      .map((e) => ({ id: e.id, patientId: 'p1', patientName: 'Ayesha Rahman', date: e.date, mood: e.mood, text: e.text }))
+      .map((e) => ({ id: e.id, patientId: e.patientId, patientName: db.users.find((x) => x.id === e.patientId)?.name ?? '', date: e.date, mood: e.mood, text: e.text }))
       .sort((a, b) => a.date.localeCompare(b.date))
   }],
   ['POST', '/chat', (_p, b: { messages: ChatMessage[] }): ChatMessage => {
+    requireRole('PATIENT')
     const last = b.messages.at(-1)?.text.toLowerCase() ?? ''
     if (/suicid|kill myself|end my life|self.?harm|hurt myself|no reason to live|hopeless/.test(last))
       return { role: 'assistant', distress: true, text: 'I am really sorry you are feeling this way. You deserve support right now. Please contact your doctor or a mental health helpline, or call 999 if you are in immediate danger. Would you like me to help you book an online session with a mental health doctor?' }

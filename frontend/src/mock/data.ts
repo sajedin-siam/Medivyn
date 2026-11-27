@@ -91,10 +91,10 @@ export function seed() {
   ]
 
   const journal: JournalEntry[] = [
-    { id: 'j1', date: day(-6), mood: 2, text: 'Could not sleep well. Work deadlines are piling up.', sharedWith: ['d2'] },
-    { id: 'j2', date: day(-4), mood: 3, text: 'A bit better today. Went for a walk in the evening.', sharedWith: ['d2'] },
-    { id: 'j3', date: day(-2), mood: 4, text: 'Talked with my sister for an hour. Felt lighter.', sharedWith: ['d2'] },
-    { id: 'j4', date: day(-1), mood: 3, text: 'Private note: nervous about the cardiology appointment.', sharedWith: [] },
+    { id: 'j1', patientId: 'p1', date: day(-6), mood: 2, text: 'Could not sleep well. Work deadlines are piling up.', sharedWith: ['d2'] },
+    { id: 'j2', patientId: 'p1', date: day(-4), mood: 3, text: 'A bit better today. Went for a walk in the evening.', sharedWith: ['d2'] },
+    { id: 'j3', patientId: 'p1', date: day(-2), mood: 4, text: 'Talked with my sister for an hour. Felt lighter.', sharedWith: ['d2'] },
+    { id: 'j4', patientId: 'p1', date: day(-1), mood: 3, text: 'Private note: nervous about the cardiology appointment.', sharedWith: [] },
   ]
 
   const notifications: Record<string, AppNotification[]> = {

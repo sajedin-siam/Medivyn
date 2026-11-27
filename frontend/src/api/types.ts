@@ -138,6 +138,7 @@ export interface DonorProfile {
 
 export interface JournalEntry {
   id: string
+  patientId: string
   date: string
   mood: 1 | 2 | 3 | 4 | 5
   text: string
