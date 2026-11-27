@@ -48,6 +48,12 @@ describe('mock API business rules', () => {
     await expect(mockFetch('POST', '/referrals/rf2/respond', { status: 'DECLINED' })).rejects.toMatchObject({ status: 409 })
   })
 
+  it('matches records and referrals by doctor id, not by name', async () => {
+    setMockUser({ id: 'd9', name: 'Dr. Tanvir Hasan', email: 'other@demo.test', role: 'DOCTOR' })
+    expect(await mockFetch('GET', '/records')).toEqual([])
+    expect(await mockFetch('GET', '/referrals')).toEqual([])
+  })
+
   it('counts a donor once and ignores answers to closed requests', async () => {
     as('DONOR')
     await mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })

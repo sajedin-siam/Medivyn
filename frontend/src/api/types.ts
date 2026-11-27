@@ -46,6 +46,7 @@ export interface MedicalRecord {
   id: string
   patientId: string
   patientName: string
+  doctorId: string
   doctorName: string
   date: string
   diagnosis: string
@@ -91,6 +92,7 @@ export interface Referral {
   id: string
   patientId: string
   patientName: string
+  fromDoctorId: string
   fromDoctor: string
   hospitalId: string
   hospitalName: string
@@ -103,6 +105,7 @@ export interface Referral {
 
 export interface BloodRequest {
   id: string
+  requesterId: string
   requesterName: string
   bloodGroup: BloodGroup
   units: number

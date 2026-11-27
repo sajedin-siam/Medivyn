@@ -109,7 +109,7 @@ const routes: [string, string, Handler][] = [
   // Clinical
   ['GET', '/records', () => {
     const u = user()
-    return db.records.filter((r) => u.role === 'PATIENT' ? r.patientId === u.id : r.doctorName === u.name)
+    return db.records.filter((r) => u.role === 'PATIENT' ? r.patientId === u.id : r.doctorId === u.id)
       .sort((a, b) => b.date.localeCompare(a.date))
   }],
   ['GET', '/patients/:id/records', (p) => {
@@ -121,7 +121,7 @@ const routes: [string, string, Handler][] = [
     const u = requireRole('DOCTOR')
     const a = db.appointments.find((x) => x.id === p.id && x.doctorId === u.id) ?? fail(404, 'Not found')
     a.status = 'COMPLETED'
-    const rec = { id: id('r'), patientId: a.patientId, patientName: a.patientName, doctorName: u.name, date: now(), ...b }
+    const rec = { id: id('r'), patientId: a.patientId, patientName: a.patientName, doctorId: u.id, doctorName: u.name, date: now(), ...b }
     db.records.push(rec)
     notify(a.patientId, `${u.name} added a diagnosis and prescription to your history.`)
     audit('Recorded diagnosis', `${a.patientName}`)
@@ -195,7 +195,7 @@ const routes: [string, string, Handler][] = [
   }],
   ['GET', '/referrals', () => {
     const u = requireRole('DOCTOR', 'HOSPITAL_ADMIN')
-    return db.referrals.filter((r) => u.role === 'DOCTOR' ? r.fromDoctor === u.name : r.hospitalId === ADMIN_HOSPITAL)
+    return db.referrals.filter((r) => u.role === 'DOCTOR' ? r.fromDoctorId === u.id : r.hospitalId === ADMIN_HOSPITAL)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   }],
   ['POST', '/referrals', (_p, b) => {
@@ -203,7 +203,7 @@ const routes: [string, string, Handler][] = [
     const h = db.hospitals.find((x) => x.id === b.hospitalId) ?? fail(404, 'Hospital not found')
     if (!h.acceptsReferrals) fail(409, `${h.name} is not accepting referrals`)
     const patient = db.users.find((x) => x.id === b.patientId) ?? fail(404, 'Patient not found')
-    const ref: Referral = { id: id('rf'), patientId: patient.id, patientName: patient.name, fromDoctor: u.name, hospitalId: h.id, hospitalName: h.name, service: b.service, reason: b.reason, status: 'PENDING', createdAt: now() }
+    const ref: Referral = { id: id('rf'), patientId: patient.id, patientName: patient.name, fromDoctorId: u.id, fromDoctor: u.name, hospitalId: h.id, hospitalName: h.name, service: b.service, reason: b.reason, status: 'PENDING', createdAt: now() }
     db.referrals.push(ref)
     return ref
   }],
@@ -218,8 +218,7 @@ const routes: [string, string, Handler][] = [
       const h = db.hospitals.find((x) => x.id === ref.hospitalId)!
       db.reports.filter((r) => r.patientId === ref.patientId).forEach((r) => { if (!r.sentTo.includes(h.name)) r.sentTo.push(h.name) })
     }
-    const doc = db.users.find((u) => u.name === ref.fromDoctor)
-    if (doc) notify(doc.id, `${ref.hospitalName} responded to the referral for ${ref.patientName}: ${b.status.replaceAll('_', ' ').toLowerCase()}.`)
+    notify(ref.fromDoctorId, `${ref.hospitalName} responded to the referral for ${ref.patientName}: ${b.status.replaceAll('_', ' ').toLowerCase()}.`)
     audit(`Referral ${b.status.toLowerCase()}`, ref.patientName)
     return ref
   }],
@@ -242,12 +241,12 @@ const routes: [string, string, Handler][] = [
   // Blood donor finder
   ['GET', '/blood-requests', () => {
     const u = requireRole('PATIENT', 'HOSPITAL_ADMIN')
-    return db.bloodRequests.filter((r) => u.role === 'HOSPITAL_ADMIN' || r.requesterName === u.name)
+    return db.bloodRequests.filter((r) => u.role === 'HOSPITAL_ADMIN' || r.requesterId === u.id)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   }],
   ['POST', '/blood-requests', (_p, b) => {
     const u = requireRole('PATIENT', 'HOSPITAL_ADMIN')
-    const req: BloodRequest = { id: id('br'), requesterName: u.role === 'HOSPITAL_ADMIN' ? `${u.name} (admin)` : u.name, ...b, status: 'OPEN', notifiedDonors: 5, acceptedDonors: 0, remindersSent: 0, createdAt: now() }
+    const req: BloodRequest = { id: id('br'), requesterId: u.id, requesterName: u.role === 'HOSPITAL_ADMIN' ? `${u.name} (admin)` : u.name, ...b, status: 'OPEN', notifiedDonors: 5, acceptedDonors: 0, remindersSent: 0, createdAt: now() }
     db.bloodRequests.push(req)
     if (b.bloodGroup === db.donorProfile.bloodGroup && db.donorProfile.active) {
       db.donorAlerts.unshift({ id: id('da'), requestId: req.id, bloodGroup: req.bloodGroup, units: req.units, hospital: req.hospital, area: req.area, urgent: req.urgent, response: 'PENDING', createdAt: now() })
@@ -258,7 +257,7 @@ const routes: [string, string, Handler][] = [
   ['POST', '/blood-requests/:id/cancel', (p) => {
     const u = requireRole('PATIENT', 'HOSPITAL_ADMIN')
     const r = db.bloodRequests.find((x) => x.id === p.id) ?? fail(404, 'Not found')
-    if (u.role !== 'HOSPITAL_ADMIN' && r.requesterName !== u.name) fail(403, 'Forbidden')
+    if (u.role !== 'HOSPITAL_ADMIN' && r.requesterId !== u.id) fail(403, 'Forbidden')
     if (r.status !== 'OPEN') fail(409, 'This request is no longer open')
     r.status = 'CANCELLED'
     return r
@@ -294,8 +293,7 @@ const routes: [string, string, Handler][] = [
     a.response = b.response
     if (req && b.response === 'ACCEPTED') {
       req.acceptedDonors++
-      const owner = db.users.find((u) => req.requesterName.startsWith(u.name))
-      if (owner) notify(owner.id, `A donor accepted your ${req.bloodGroup} blood request. Reminders have stopped.`)
+      notify(req.requesterId, `A donor accepted your ${req.bloodGroup} blood request. Reminders have stopped.`)
     }
     return a
   }],
