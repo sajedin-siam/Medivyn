@@ -28,11 +28,7 @@ function save() {
 export function setMockUser(user: User | null) { me = user }
 export function resetMockDb() { db = seed(); save() }
 
-class HttpError extends Error {
-  status: number
-  constructor(status: number, message: string) { super(message); this.status = status }
-}
-const fail = (status: number, msg: string): never => { throw new HttpError(status, msg) }
+const fail = (status: number, msg: string): never => { throw new ApiError(status, msg) }
 const id = (prefix: string) => `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`
 const now = () => new Date().toISOString()
 const user = () => me ?? fail(401, 'Not signed in')
@@ -397,14 +393,9 @@ export async function mockFetch<T>(method: string, fullPath: string, body?: unkn
     const m = r.method === method && path.match(r.re)
     if (!m) continue
     const params = Object.fromEntries(r.keys.map((k, i) => [k, decodeURIComponent(m[i + 1])]))
-    try {
-      const result = r.handler(params, body, new URLSearchParams(query))
-      save()
-      return structuredClone(result) as T
-    } catch (e) {
-      if (e instanceof HttpError) throw new ApiError(e.status, e.message)
-      throw e
-    }
+    const result = r.handler(params, body, new URLSearchParams(query))
+    save()
+    return structuredClone(result) as T
   }
   throw new Error(`Mock API: no route for ${method} ${path}`)
 }
