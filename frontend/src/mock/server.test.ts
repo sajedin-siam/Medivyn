@@ -48,6 +48,14 @@ describe('mock API business rules', () => {
     await expect(mockFetch('POST', '/referrals/rf2/respond', { status: 'DECLINED' })).rejects.toMatchObject({ status: 409 })
   })
 
+  it('counts a donor once and ignores answers to closed requests', async () => {
+    as('DONOR')
+    await mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })
+    await expect(mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })).rejects.toMatchObject({ status: 409 })
+    as('HOSPITAL_ADMIN')
+    expect((await mockFetch<BloodRequest[]>('GET', '/blood-requests')).find((r) => r.id === 'br1')?.acceptedDonors).toBe(2)
+  })
+
   it('puts the donor in the recovery period after a confirmed donation', async () => {
     as('DONOR')
     await mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })

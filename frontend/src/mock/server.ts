@@ -288,8 +288,10 @@ const routes: [string, string, Handler][] = [
   ['POST', '/donor/alerts/:id/respond', (p, b: { response: 'ACCEPTED' | 'DECLINED' }) => {
     requireRole('DONOR')
     const a = db.donorAlerts.find((x) => x.id === p.id) ?? fail(404, 'Not found')
-    a.response = b.response
+    if (a.response !== 'PENDING') fail(409, 'You have already answered this request')
     const req = db.bloodRequests.find((r) => r.id === a.requestId)
+    if (req && req.status !== 'OPEN') fail(409, 'This request is no longer open')
+    a.response = b.response
     if (req && b.response === 'ACCEPTED') {
       req.acceptedDonors++
       const owner = db.users.find((u) => req.requesterName.startsWith(u.name))
