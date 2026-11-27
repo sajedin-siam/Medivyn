@@ -13,10 +13,11 @@ export const userManager = new UserManager({
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 })
 
-/** Maps a Keycloak user to the app user. The role comes from the realm roles in the access token. */
-export function toAppUser(u: OidcUser): User {
+/** Maps a Keycloak user to the app user, or null when the token has no app role yet (e.g. a doctor awaiting approval). */
+export function toAppUser(u: OidcUser): User | null {
   const payload = JSON.parse(atob(u.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
   const roles: string[] = payload.realm_access?.roles ?? []
-  const role = ROLES.find((r) => roles.includes(r)) ?? 'PATIENT'
+  const role = ROLES.find((r) => roles.includes(r))
+  if (!role) return null
   return { id: u.profile.sub, name: u.profile.name ?? u.profile.preferred_username ?? 'User', email: u.profile.email ?? '', role }
 }
