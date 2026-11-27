@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, type ReactNode } from 'react'
 import { API_MODE, configureClient } from '../api/client'
 import type { Role, User } from '../api/types'
@@ -8,6 +9,7 @@ const MOCK_KEY = 'mediconnect-mock-user'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [ready, setReady] = useState(false)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (API_MODE === 'mock') {
@@ -53,6 +55,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    // the next user must not see this user's cached data
+    queryClient.clear()
     if (API_MODE === 'mock') {
       sessionStorage.removeItem(MOCK_KEY)
       const { setMockUser } = await import('../mock/server')
