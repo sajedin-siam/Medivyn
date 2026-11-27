@@ -250,7 +250,7 @@ The backend is Java and Spring Boot; the frontend is a separate React app that t
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/mediconnect-ehms.git
+git clone https://github.com/sajedin-siam/Medivyn.git
 cd mediconnect-ehms
 ```
 
