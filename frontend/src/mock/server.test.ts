@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { Appointment, BloodRequest, DonorProfile } from '../api/types'
+import type { Appointment, Bill, BloodRequest, DonorProfile } from '../api/types'
 import { DEMO_USERS } from './data'
 import { localDate } from '../lib/format'
 import { mockFetch, resetMockDb, setMockUser } from './server'
@@ -22,6 +22,44 @@ describe('mock API business rules', () => {
     await expect(mockFetch('GET', '/admin/doctors')).rejects.toMatchObject({ status: 403 })
     setMockUser(null)
     await expect(mockFetch('GET', '/appointments')).rejects.toMatchObject({ status: 401 })
+  })
+
+  it('stops a patient from touching another patient’s bill, report or appointment', async () => {
+    setMockUser({ id: 'p2', name: 'Kamal Uddin', email: 'kamal@demo.test', role: 'PATIENT' })
+    await expect(mockFetch('POST', '/bills/b2/pay', { method: 'CARD' })).rejects.toMatchObject({ status: 403 })
+    await expect(mockFetch('POST', '/reports/rep1/send', { hospitalId: 'h2' })).rejects.toMatchObject({ status: 403 })
+    await expect(mockFetch('POST', '/appointments/ap1/cancel')).rejects.toMatchObject({ status: 403 })
+    await expect(mockFetch('PUT', '/journal/j1', { sharedWith: [] })).rejects.toMatchObject({ status: 404 })
+    setMockUser(null)
+    await expect(mockFetch('POST', '/bills/b2/pay', { method: 'CARD' })).rejects.toMatchObject({ status: 401 })
+  })
+
+  it('leaves a cash bill unpaid until staff mark it paid', async () => {
+    as('PATIENT')
+    expect((await mockFetch<Bill>('POST', '/bills/b2/pay', { method: 'CASH' })).status).toBe('UNPAID')
+    as('HOSPITAL_ADMIN')
+    expect((await mockFetch<Bill>('POST', '/admin/bills/b2/mark-paid')).status).toBe('PAID')
+  })
+
+  it('lets an admin answer only pending referrals sent to their hospital', async () => {
+    as('HOSPITAL_ADMIN')
+    await expect(mockFetch('POST', '/referrals/rf1/respond', { status: 'ACCEPTED' })).rejects.toMatchObject({ status: 403 })
+    await mockFetch('POST', '/referrals/rf2/respond', { status: 'ACCEPTED' })
+    await expect(mockFetch('POST', '/referrals/rf2/respond', { status: 'DECLINED' })).rejects.toMatchObject({ status: 409 })
+  })
+
+  it('matches records and referrals by doctor id, not by name', async () => {
+    setMockUser({ id: 'd9', name: 'Dr. Tanvir Hasan', email: 'other@demo.test', role: 'DOCTOR' })
+    expect(await mockFetch('GET', '/records')).toEqual([])
+    expect(await mockFetch('GET', '/referrals')).toEqual([])
+  })
+
+  it('counts a donor once and ignores answers to closed requests', async () => {
+    as('DONOR')
+    await mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })
+    await expect(mockFetch('POST', '/donor/alerts/da1/respond', { response: 'ACCEPTED' })).rejects.toMatchObject({ status: 409 })
+    as('HOSPITAL_ADMIN')
+    expect((await mockFetch<BloodRequest[]>('GET', '/blood-requests')).find((r) => r.id === 'br1')?.acceptedDonors).toBe(2)
   })
 
   it('puts the donor in the recovery period after a confirmed donation', async () => {

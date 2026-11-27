@@ -48,7 +48,7 @@ export function FindDoctorsPage() {
           </div>
         ) : <Card><EmptyState icon={Stethoscope} title="No doctors found" description="Try a different name or specialty." /></Card>}
       </QueryState>
-      <BookDialog doctor={booking} onClose={() => setBooking(null)} />
+      <BookDialog key={booking?.id} doctor={booking} onClose={() => setBooking(null)} />
     </>
   )
 }

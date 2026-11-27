@@ -11,7 +11,8 @@ export function useAction<TVars, TResult = unknown>(
     mutationFn: fn,
     onSuccess: (result) => {
       opts.invalidate?.forEach((key) => qc.invalidateQueries({ queryKey: key }))
-      if (opts.success) toast.success(typeof opts.success === 'function' ? opts.success(result) : opts.success)
+      const msg = typeof opts.success === 'function' ? opts.success(result) : opts.success
+      if (msg) toast.success(msg)
       opts.onSuccess?.(result)
     },
     onError: (e: Error) => toast.error(e.message),

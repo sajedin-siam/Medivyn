@@ -51,7 +51,7 @@ export function seed() {
   ]
 
   const records: MedicalRecord[] = [
-    { id: 'r1', patientId: 'p1', patientName: 'Ayesha Rahman', doctorName: 'Dr. Tanvir Hasan', date: day(-20, 10), diagnosis: 'Benign palpitations, likely stress related', notes: 'Reduce caffeine. Review in 3 months if symptoms persist.', prescriptions: [{ medicine: 'Propranolol 10 mg', dosage: '1 tablet when needed', duration: '30 days' }] },
+    { id: 'r1', patientId: 'p1', patientName: 'Ayesha Rahman', doctorId: 'd1', doctorName: 'Dr. Tanvir Hasan', date: day(-20, 10), diagnosis: 'Benign palpitations, likely stress related', notes: 'Reduce caffeine. Review in 3 months if symptoms persist.', prescriptions: [{ medicine: 'Propranolol 10 mg', dosage: '1 tablet when needed', duration: '30 days' }] },
   ]
 
   const bills: Bill[] = [
@@ -74,14 +74,14 @@ export function seed() {
   ]
 
   const referrals: Referral[] = [
-    { id: 'rf1', patientId: 'p2', patientName: 'Kamal Uddin', fromDoctor: 'Dr. Tanvir Hasan', hospitalId: 'h3', hospitalName: 'Lakeview Hospital', service: 'Cardiac Surgery', reason: 'Suspected valve disease, needs surgical opinion', status: 'PENDING', createdAt: day(-1) },
-    { id: 'rf2', patientId: 'p3', patientName: 'Sadia Akter', fromDoctor: 'Dr. Lina Ahmed', hospitalId: 'h1', hospitalName: 'MediConnect General Hospital', service: 'Cardiology', reason: 'Recurrent arrhythmia, needs specialist follow-up', status: 'PENDING', createdAt: day(-1) },
-    { id: 'rf3', patientId: 'p1', patientName: 'Ayesha Rahman', fromDoctor: 'Dr. Tanvir Hasan', hospitalId: 'h2', hospitalName: 'Northside Medical Center', service: 'ICU', reason: 'Post-operative monitoring', status: 'DECLINED', responseNote: 'No ICU beds this week', createdAt: day(-5) },
+    { id: 'rf1', patientId: 'p2', patientName: 'Kamal Uddin', fromDoctorId: 'd1', fromDoctor: 'Dr. Tanvir Hasan', hospitalId: 'h3', hospitalName: 'Lakeview Hospital', service: 'Cardiac Surgery', reason: 'Suspected valve disease, needs surgical opinion', status: 'PENDING', createdAt: day(-1) },
+    { id: 'rf2', patientId: 'p3', patientName: 'Sadia Akter', fromDoctorId: 'ext1', fromDoctor: 'Dr. Lina Ahmed', hospitalId: 'h1', hospitalName: 'MediConnect General Hospital', service: 'Cardiology', reason: 'Recurrent arrhythmia, needs specialist follow-up', status: 'PENDING', createdAt: day(-1) },
+    { id: 'rf3', patientId: 'p1', patientName: 'Ayesha Rahman', fromDoctorId: 'd1', fromDoctor: 'Dr. Tanvir Hasan', hospitalId: 'h2', hospitalName: 'Northside Medical Center', service: 'ICU', reason: 'Post-operative monitoring', status: 'DECLINED', responseNote: 'No ICU beds this week', createdAt: day(-5) },
   ]
 
   const bloodRequests: BloodRequest[] = [
-    { id: 'br1', requesterName: 'Ayesha Rahman', bloodGroup: 'O+', units: 2, hospital: 'MediConnect General Hospital', area: 'Dhanmondi', urgent: true, status: 'OPEN', notifiedDonors: 6, acceptedDonors: 1, remindersSent: 2, createdAt: hoursAgo(3) },
-    { id: 'br2', requesterName: 'Nusrat Jahan (admin)', bloodGroup: 'B-', units: 1, hospital: 'MediConnect General Hospital', area: 'Dhanmondi', urgent: false, status: 'OPEN', notifiedDonors: 3, acceptedDonors: 0, remindersSent: 1, createdAt: day(-1) },
+    { id: 'br1', requesterId: 'p1', requesterName: 'Ayesha Rahman', bloodGroup: 'O+', units: 2, hospital: 'MediConnect General Hospital', area: 'Dhanmondi', urgent: true, status: 'OPEN', notifiedDonors: 6, acceptedDonors: 1, remindersSent: 2, createdAt: hoursAgo(3) },
+    { id: 'br2', requesterId: 'a1', requesterName: 'Nusrat Jahan (admin)', bloodGroup: 'B-', units: 1, hospital: 'MediConnect General Hospital', area: 'Dhanmondi', urgent: false, status: 'OPEN', notifiedDonors: 3, acceptedDonors: 0, remindersSent: 1, createdAt: day(-1) },
   ]
 
   const donorProfile: DonorProfile = { bloodGroup: 'O+', active: true, lastDonation: day(-150), eligibleFrom: null }
@@ -91,10 +91,10 @@ export function seed() {
   ]
 
   const journal: JournalEntry[] = [
-    { id: 'j1', date: day(-6), mood: 2, text: 'Could not sleep well. Work deadlines are piling up.', sharedWith: ['d2'] },
-    { id: 'j2', date: day(-4), mood: 3, text: 'A bit better today. Went for a walk in the evening.', sharedWith: ['d2'] },
-    { id: 'j3', date: day(-2), mood: 4, text: 'Talked with my sister for an hour. Felt lighter.', sharedWith: ['d2'] },
-    { id: 'j4', date: day(-1), mood: 3, text: 'Private note: nervous about the cardiology appointment.', sharedWith: [] },
+    { id: 'j1', patientId: 'p1', date: day(-6), mood: 2, text: 'Could not sleep well. Work deadlines are piling up.', sharedWith: ['d2'] },
+    { id: 'j2', patientId: 'p1', date: day(-4), mood: 3, text: 'A bit better today. Went for a walk in the evening.', sharedWith: ['d2'] },
+    { id: 'j3', patientId: 'p1', date: day(-2), mood: 4, text: 'Talked with my sister for an hour. Felt lighter.', sharedWith: ['d2'] },
+    { id: 'j4', patientId: 'p1', date: day(-1), mood: 3, text: 'Private note: nervous about the cardiology appointment.', sharedWith: [] },
   ]
 
   const notifications: Record<string, AppNotification[]> = {

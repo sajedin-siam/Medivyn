@@ -5,7 +5,7 @@ import { api } from '../../api/client'
 import type { Appointment, Bill, BloodRequest } from '../../api/types'
 import { useAuth } from '../../auth/useAuth'
 import { PageHeader, StatCard } from '../../components/common'
-import { Button } from '../../components/ui/button'
+import { buttonClass } from '../../components/ui/buttonClass'
 import { Card, CardBody, CardHeader } from '../../components/ui/card'
 import { formatDateTime, formatTaka } from '../../lib/format'
 
@@ -45,7 +45,7 @@ export function PatientDashboardPage() {
                   <p className="font-semibold">{next.doctorName} · {next.specialty}</p>
                   <p className="text-sm text-slate-500">{formatDateTime(next.dateTime)} · {next.type === 'ONLINE' ? 'Online session' : 'In person'}</p>
                 </div>
-                {next.meetingLink && <a href={next.meetingLink} target="_blank" rel="noreferrer"><Button>Join session</Button></a>}
+                {next.meetingLink && <a href={next.meetingLink} target="_blank" rel="noreferrer" className={buttonClass()}>Join session</a>}
               </div>
             ) : <p className="text-sm text-slate-500">No upcoming appointments. <Link to="/patient/doctors" className="font-medium text-brand-700 hover:underline">Find a doctor</Link></p>}
           </CardBody>

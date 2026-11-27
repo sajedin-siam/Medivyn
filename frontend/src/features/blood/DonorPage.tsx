@@ -65,8 +65,8 @@ export function DonorPage() {
                     </div>
                     {a.response === 'PENDING' ? (
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={() => respond.mutate({ id: a.id, response: 'ACCEPTED' })}>I can donate</Button>
-                        <Button size="sm" variant="secondary" onClick={() => respond.mutate({ id: a.id, response: 'DECLINED' })}>Not now</Button>
+                        <Button size="sm" disabled={respond.isPending} onClick={() => respond.mutate({ id: a.id, response: 'ACCEPTED' })}>I can donate</Button>
+                        <Button size="sm" variant="secondary" disabled={respond.isPending} onClick={() => respond.mutate({ id: a.id, response: 'DECLINED' })}>Not now</Button>
                       </div>
                     ) : <StatusBadge status={a.response} />}
                   </li>

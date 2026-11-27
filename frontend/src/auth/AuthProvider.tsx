@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
 import { API_MODE, configureClient } from '../api/client'
 import type { Role, User } from '../api/types'
 import { AuthContext } from './useAuth'
@@ -8,6 +10,7 @@ const MOCK_KEY = 'mediconnect-mock-user'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [ready, setReady] = useState(false)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (API_MODE === 'mock') {
@@ -30,9 +33,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           : await userManager.getUser()
         if (oidcUser && !oidcUser.expired) {
           token = oidcUser.access_token
-          setUser(toAppUser(oidcUser))
+          const appUser = toAppUser(oidcUser)
+          if (!appUser) toast.error('Your account has no access yet. If you registered as a doctor, a hospital admin must approve you first.')
+          setUser(appUser)
         }
         if (window.location.pathname === '/auth/callback') window.history.replaceState(null, '', '/')
+      } catch {
+        // e.g. the callback page was reloaded and its one-time login state is gone: start over at sign-in
+        window.history.replaceState(null, '', '/login')
       } finally {
         setReady(true)
       }
@@ -53,6 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    // the next user must not see this user's cached data
+    queryClient.clear()
     if (API_MODE === 'mock') {
       sessionStorage.removeItem(MOCK_KEY)
       const { setMockUser } = await import('../mock/server')

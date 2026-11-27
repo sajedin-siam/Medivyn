@@ -22,7 +22,7 @@ function PayDialog({ bill, onClose }: { bill: Bill | null; onClose: () => void }
   const pay = useAction(
     () => api.post<Bill & { redirectUrl?: string }>(`/bills/${bill!.id}/pay`, { method }),
     {
-      success: 'Payment complete',
+      success: (r) => r.redirectUrl ? '' : r.status === 'PAID' ? 'Payment complete' : 'Please pay at the billing counter. Staff will mark the bill paid.',
       invalidate: [['bills']],
       // live mode: the backend returns the payment gateway page for card / bKash
       onSuccess: (r) => { if (r.redirectUrl) window.location.href = r.redirectUrl; else onClose() },
