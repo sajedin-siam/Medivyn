@@ -42,6 +42,13 @@ function audit(action: string, target: string) {
   db.audit.unshift({ id: id('au'), actor: user().name, action, target, at: now() })
 }
 
+/** The doctor's bookable times on a local date: fixed hours, not taken, not in the past. */
+function freeSlots(doctorId: string, date: string) {
+  const taken = new Set(db.appointments.filter((a) => a.doctorId === doctorId && a.status !== 'CANCELLED').map((a) => a.dateTime))
+  return [9, 10, 11, 12, 14, 15, 16, 17].map((h) => new Date(`${date}T${String(h).padStart(2, '0')}:00:00`).toISOString())
+    .filter((t) => !taken.has(t) && new Date(t) > new Date())
+}
+
 type Handler = (p: Record<string, string>, body: any, q: URLSearchParams) => unknown
 const routes: [string, string, Handler][] = [
   // Accounts
@@ -63,13 +70,7 @@ const routes: [string, string, Handler][] = [
     return db.doctors.filter((d) => d.status === 'APPROVED' &&
       [d.name, d.specialty, d.department].some((s) => s.toLowerCase().includes(term)))
   }],
-  ['GET', '/doctors/:id/slots', (p, _b, q) => {
-    const date = q.get('date') ?? localDate()
-    const taken = new Set(db.appointments.filter((a) => a.doctorId === p.id && a.status !== 'CANCELLED')
-      .map((a) => a.dateTime))
-    return [9, 10, 11, 12, 14, 15, 16, 17].map((h) => new Date(`${date}T${String(h).padStart(2, '0')}:00:00`).toISOString())
-      .filter((t) => !taken.has(t) && new Date(t) > new Date())
-  }],
+  ['GET', '/doctors/:id/slots', (p, _b, q) => freeSlots(p.id, q.get('date') ?? localDate())],
   ['GET', '/my-doctors', () => {
     const u = requireRole('PATIENT')
     const ids = new Set(db.appointments.filter((a) => a.patientId === u.id).map((a) => a.doctorId))
@@ -82,9 +83,12 @@ const routes: [string, string, Handler][] = [
   }],
   ['POST', '/appointments', (_p, b) => {
     const u = requireRole('PATIENT')
-    const doc = db.doctors.find((d) => d.id === b.doctorId) ?? fail(404, 'Doctor not found')
+    const doc = db.doctors.find((d) => d.id === b.doctorId && d.status === 'APPROVED') ?? fail(404, 'Doctor not found')
+    if (b.type !== 'IN_PERSON' && b.type !== 'ONLINE') fail(400, 'Choose in person or online')
+    if (!b.reason?.trim()) fail(400, 'Enter the reason for the visit')
     if (db.appointments.some((a) => a.doctorId === doc.id && a.dateTime === b.dateTime && a.status !== 'CANCELLED'))
       fail(409, 'This time slot was just booked. Please choose another.')
+    if (!freeSlots(doc.id, localDate(new Date(b.dateTime))).includes(b.dateTime)) fail(400, 'Choose one of the offered times')
     const appt: Appointment = {
       id: id('ap'), patientId: u.id, patientName: u.name, doctorId: doc.id, doctorName: doc.name, specialty: doc.specialty,
       dateTime: b.dateTime, type: b.type, reason: b.reason, status: 'BOOKED',

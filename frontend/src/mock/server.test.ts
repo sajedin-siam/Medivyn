@@ -40,6 +40,16 @@ describe('API business rules', () => {
     await expect(call('POST', '/appointments', body)).rejects.toMatchObject({ status: 409 })
   })
 
+  it('books only offered future times with approved doctors', async () => {
+    as('PATIENT')
+    const [slot] = await call<string[]>('GET', `/doctors/d3/slots?date=${tomorrow()}`)
+    const base = { doctorId: 'd3', dateTime: slot, type: 'IN_PERSON', reason: 'Knee pain' }
+    const odd = new Date(slot); odd.setMinutes(17)
+    await expect(call('POST', '/appointments', { ...base, dateTime: odd.toISOString() })).rejects.toMatchObject({ status: 400 })
+    await expect(call('POST', '/appointments', { ...base, dateTime: new Date(Date.now() - 86_400_000).toISOString() })).rejects.toMatchObject({ status: 400 })
+    await expect(call('POST', '/appointments', { ...base, doctorId: 'd5' })).rejects.toMatchObject({ status: 404 })
+  })
+
   it('blocks other roles from admin endpoints', async () => {
     as('DONOR')
     await expect(call('GET', '/admin/doctors')).rejects.toMatchObject({ status: 403 })
