@@ -6,6 +6,7 @@ import { api } from '../../api/client'
 import type { Appointment, MedicalRecord } from '../../api/types'
 import { EmptyState, PageHeader, QueryState, Spinner } from '../../components/common'
 import { Button } from '../../components/ui/button'
+import { buttonClass } from '../../components/ui/buttonClass'
 import { Card, CardHeader } from '../../components/ui/card'
 import { Dialog } from '../../components/ui/dialog'
 import { isPast, isToday } from '../../lib/format'
@@ -28,9 +29,9 @@ export function DoctorAppointmentsPage() {
   const [history, setHistory] = useState<{ id: string; name: string } | null>(null)
 
   const actions = (a: Appointment) => <>
-    {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer"><Button size="sm" variant="secondary">Start session</Button></a>}
+    {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer" className={buttonClass('secondary', 'sm')}>Start session</a>}
     <Button size="sm" variant="secondary" onClick={() => setHistory({ id: a.patientId, name: a.patientName })}>History</Button>
-    <Link to={`/doctor/referrals?patient=${a.patientId}`}><Button size="sm" variant="secondary">Refer</Button></Link>
+    <Link to={`/doctor/referrals?patient=${a.patientId}`} className={buttonClass('secondary', 'sm')}>Refer</Link>
     <Button size="sm" onClick={() => setRecording(a)}>Record diagnosis</Button>
   </>
 

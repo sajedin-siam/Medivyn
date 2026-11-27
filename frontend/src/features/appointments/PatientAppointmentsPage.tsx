@@ -5,6 +5,7 @@ import { api } from '../../api/client'
 import type { Appointment } from '../../api/types'
 import { EmptyState, PageHeader, QueryState } from '../../components/common'
 import { Button } from '../../components/ui/button'
+import { buttonClass } from '../../components/ui/buttonClass'
 import { Card, CardHeader } from '../../components/ui/card'
 import { useAction } from '../../hooks/useAction'
 import { AppointmentItem } from './AppointmentItem'
@@ -15,7 +16,7 @@ export function PatientAppointmentsPage() {
 
   return (
     <>
-      <PageHeader title="My appointments" action={<Link to="/patient/doctors"><Button>Book new</Button></Link>} />
+      <PageHeader title="My appointments" action={<Link to="/patient/doctors" className={buttonClass()}>Book new</Link>} />
       <QueryState query={appts}>
         {(list) => {
           const upcoming = list.filter((a) => a.status === 'BOOKED')
@@ -28,7 +29,7 @@ export function PatientAppointmentsPage() {
                   <ul className="divide-y divide-slate-100">
                     {upcoming.map((a) => (
                       <AppointmentItem key={a.id} a={a} who={`${a.doctorName} · ${a.specialty}`} actions={<>
-                        {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer"><Button size="sm">Join session</Button></a>}
+                        {a.meetingLink && <a href={a.meetingLink} target="_blank" rel="noreferrer" className={buttonClass('primary', 'sm')}>Join session</a>}
                         <Button size="sm" variant="secondary" loading={cancel.isPending && cancel.variables === a.id}
                           onClick={() => confirm('Cancel this appointment?') && cancel.mutate(a.id)}>Cancel</Button>
                       </>} />
