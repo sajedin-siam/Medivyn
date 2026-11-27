@@ -84,7 +84,7 @@ export function ReportsPage() {
           </div>
         ) : <Card><EmptyState icon={FileText} title="No reports uploaded" description="PDF, JPG or PNG up to 10 MB." /></Card>}
       </QueryState>
-      <SendDialog report={sending} onClose={() => setSending(null)} />
+      <SendDialog key={sending?.id} report={sending} onClose={() => setSending(null)} />
     </>
   )
 }

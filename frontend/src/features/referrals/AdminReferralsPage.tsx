@@ -69,7 +69,7 @@ export function AdminReferralsPage() {
           ) : <EmptyState icon={ClipboardList} title="No referrals" />}
         </QueryState>
       </Card>
-      <RespondDialog target={target} onClose={() => setTarget(null)} />
+      <RespondDialog key={target ? `${target.r.id}-${target.status}` : undefined} target={target} onClose={() => setTarget(null)} />
     </>
   )
 }

@@ -59,7 +59,7 @@ export function DoctorAppointmentsPage() {
           ) : <Card><EmptyState icon={CalendarDays} title="No appointments yet" /></Card>
         }}
       </QueryState>
-      <RecordDialog appointment={recording} onClose={() => setRecording(null)} />
+      <RecordDialog key={recording?.id} appointment={recording} onClose={() => setRecording(null)} />
       <PatientHistoryDialog patient={history} onClose={() => setHistory(null)} />
     </>
   )
