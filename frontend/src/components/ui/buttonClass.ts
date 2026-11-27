@@ -6,10 +6,11 @@ export const variants = {
   ghost: 'text-neutral-700 hover:bg-neutral-100 disabled:text-neutral-400',
   danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-600/50',
 }
-export const sizes = { sm: 'h-9 px-3 text-sm', md: 'h-11 px-4 text-sm' }
+// sm grows to 44px on touch screens so it stays easy to hit
+export const sizes = { sm: 'h-10 px-3.5 text-sm pointer-coarse:h-11', md: 'h-11 px-5 text-[15px]' }
 
 /** Button styling for links, so a link never has to wrap a <button>. */
 export const buttonClass = (variant: keyof typeof variants = 'primary', size: keyof typeof sizes = 'md', className?: string) => cn(
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,box-shadow,transform] duration-150 enabled:hover:-translate-y-px enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,box-shadow,transform] duration-150 not-disabled:hover:-translate-y-px not-disabled:active:translate-y-0 not-disabled:active:scale-[0.98] disabled:cursor-not-allowed',
   variants[variant], sizes[size], className,
 )

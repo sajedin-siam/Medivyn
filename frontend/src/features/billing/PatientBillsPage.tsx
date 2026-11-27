@@ -32,17 +32,17 @@ function PayDialog({ bill, onClose }: { bill: Bill | null; onClose: () => void }
     <Dialog open={!!bill} onClose={onClose} title="Pay bill">
       {bill && (
         <div className="space-y-5">
-          <div className="rounded-lg bg-slate-50 p-4">
-            <p className="text-sm text-slate-600">{bill.description}</p>
+          <div className="rounded-lg bg-neutral-50 p-4">
+            <p className="text-sm text-neutral-600">{bill.description}</p>
             <p className="text-2xl font-semibold">{formatTaka(bill.amount)}</p>
           </div>
           <fieldset className="space-y-2">
-            <legend className="mb-2 text-sm font-medium text-slate-700">Payment method</legend>
+            <legend className="mb-2 text-sm font-medium text-neutral-700">Payment method</legend>
             {METHODS.map((m) => (
-              <label key={m.value} className={cn('flex cursor-pointer items-start gap-3 rounded-lg border p-3', method === m.value ? 'border-brand-600 bg-brand-50' : 'border-slate-200')}>
+              <label key={m.value} className={cn('flex cursor-pointer items-start gap-3 rounded-lg border p-3', method === m.value ? 'border-brand-600 bg-brand-50' : 'border-neutral-200')}>
                 <input type="radio" name="method" className="mt-1 accent-brand-700" checked={method === m.value} onChange={() => setMethod(m.value)} />
-                <m.icon className="mt-0.5 size-5 text-slate-600" aria-hidden />
-                <span><span className="block text-sm font-medium">{m.label}</span><span className="block text-xs text-slate-500">{m.note}</span></span>
+                <m.icon className="mt-0.5 size-5 text-neutral-600" aria-hidden />
+                <span><span className="block text-sm font-medium">{m.label}</span><span className="block text-xs text-neutral-500">{m.note}</span></span>
               </label>
             ))}
           </fieldset>
@@ -81,7 +81,7 @@ export function PatientBillsPage() {
                           <Td>{formatDate(b.createdAt)}</Td>
                           <Td className="font-medium">{b.description}</Td>
                           <Td>{formatTaka(b.amount)}</Td>
-                          <Td><StatusBadge status={b.status} />{b.paidWith && <span className="ml-2 text-xs text-slate-500">{humanize(b.paidWith)}</span>}</Td>
+                          <Td><StatusBadge status={b.status} />{b.paidWith && <span className="ml-2 text-sm text-neutral-600">by {METHODS.find((m) => m.value === b.paidWith)?.label ?? humanize(b.paidWith)}</span>}</Td>
                           <Td className="text-right">{b.status === 'UNPAID' && <Button size="sm" onClick={() => setPaying(b)}>Pay now</Button>}</Td>
                         </tr>
                       ))}

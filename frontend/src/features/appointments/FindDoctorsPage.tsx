@@ -23,7 +23,7 @@ export function FindDoctorsPage() {
     <>
       <PageHeader title="Find a doctor" description="Search by name, specialty or department, then book in person or online." />
       <div className="relative mb-6 max-w-xl">
-        <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-slate-400" aria-hidden />
+        <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-neutral-400" aria-hidden />
         <Input className="pl-9" placeholder="e.g. Cardiology, Dr. Farhana" value={term} onChange={(e) => setTerm(e.target.value)} aria-label="Search doctors" />
       </div>
       <QueryState query={doctors}>
@@ -40,8 +40,8 @@ export function FindDoctorsPage() {
                     <Badge tone="accent" className="mt-1">{d.specialty}</Badge>
                   </div>
                 </div>
-                <p className="mt-4 text-sm text-slate-600">{d.hospital}</p>
-                <p className="text-sm text-slate-600">Consultation fee: <span className="font-medium text-slate-900">{formatTaka(d.fee)}</span></p>
+                <p className="mt-4 text-sm text-neutral-600">{d.hospital}</p>
+                <p className="text-sm text-neutral-600">Consultation fee: <span className="font-medium text-neutral-900">{formatTaka(d.fee)}</span></p>
                 <Button className="mt-4" onClick={() => setBooking(d)}>Book appointment</Button>
               </Card>
             ))}

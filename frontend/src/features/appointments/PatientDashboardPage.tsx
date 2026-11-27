@@ -7,7 +7,7 @@ import { useAuth } from '../../auth/useAuth'
 import { PageHeader, StatCard } from '../../components/common'
 import { buttonClass } from '../../components/ui/buttonClass'
 import { Card, CardBody, CardHeader } from '../../components/ui/card'
-import { formatDateTime, formatTaka } from '../../lib/format'
+import { formatDateTime, formatTaka, greeting } from '../../lib/format'
 
 const QUICK: [string, string, LucideIcon][] = [
   ['/patient/doctors', 'Book a doctor', Search],
@@ -27,12 +27,12 @@ export function PatientDashboardPage() {
 
   return (
     <>
-      <PageHeader title={`Hello, ${user?.name.split(' ')[0]}`} description="Here is what is coming up for you." />
+      <PageHeader title={`${greeting()}, ${user?.name.split(' ')[0]}`} description="Here is what is coming up for you." />
       <div className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-3">
-          <StatCard label="Upcoming appointments" value={appts.data?.filter((a) => a.status === 'BOOKED').length ?? '–'} icon={CalendarDays} />
-          <StatCard label="Amount due" value={formatTaka(due)} icon={Receipt} tone={due ? 'amber' : 'brand'} />
-          <StatCard label="Open blood requests" value={openBlood} icon={Droplet} tone="red" />
+          <StatCard label="Upcoming appointments" value={appts.data?.filter((a) => a.status === 'BOOKED').length ?? '–'} icon={CalendarDays} to="/patient/appointments" />
+          <StatCard label={due ? 'Amount due · pay now' : 'Amount due'} value={formatTaka(due)} icon={Receipt} tone={due ? 'amber' : 'brand'} to="/patient/bills" />
+          <StatCard label="Open blood requests" value={openBlood} icon={Droplet} tone="red" to="/patient/blood" />
         </div>
 
         <Card>
@@ -43,17 +43,17 @@ export function PatientDashboardPage() {
                 <div className="rounded-xl bg-brand-50 p-3 text-brand-700">{next.type === 'ONLINE' ? <Video className="size-6" /> : <CalendarDays className="size-6" />}</div>
                 <div className="flex-1">
                   <p className="font-semibold">{next.doctorName} · {next.specialty}</p>
-                  <p className="text-sm text-slate-500">{formatDateTime(next.dateTime)} · {next.type === 'ONLINE' ? 'Online session' : 'In person'}</p>
+                  <p className="text-sm text-neutral-500">{formatDateTime(next.dateTime)} · {next.type === 'ONLINE' ? 'Online session' : 'In person'}</p>
                 </div>
                 {next.meetingLink && <a href={next.meetingLink} target="_blank" rel="noreferrer" className={buttonClass()}>Join session</a>}
               </div>
-            ) : <p className="text-sm text-slate-500">No upcoming appointments. <Link to="/patient/doctors" className="font-medium text-brand-700 hover:underline">Find a doctor</Link></p>}
+            ) : <p className="text-sm text-neutral-500">No upcoming appointments. <Link to="/patient/doctors" className="font-medium text-brand-700 hover:underline">Find a doctor</Link></p>}
           </CardBody>
         </Card>
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {QUICK.map(([to, label, Icon]) => (
-            <Link key={to} to={to} className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-5 text-center text-sm font-medium text-slate-700 shadow-sm hover:border-brand-600 hover:text-brand-800">
+            <Link key={to} to={to} className="flex flex-col items-center gap-2 rounded-xl border border-neutral-200 bg-white p-5 text-center text-sm font-medium text-neutral-700 shadow-sm hover:border-brand-600 hover:text-brand-800">
               <Icon className="size-6 text-brand-700" aria-hidden />{label}
             </Link>
           ))}

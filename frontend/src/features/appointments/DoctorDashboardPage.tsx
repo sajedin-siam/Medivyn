@@ -6,7 +6,7 @@ import type { Appointment, Referral } from '../../api/types'
 import { useAuth } from '../../auth/useAuth'
 import { EmptyState, PageHeader, StatCard, StatusBadge } from '../../components/common'
 import { Card, CardHeader } from '../../components/ui/card'
-import { formatTime, isToday } from '../../lib/format'
+import { formatTime, greeting, isToday } from '../../lib/format'
 
 export function DoctorDashboardPage() {
   const { user } = useAuth()
@@ -18,22 +18,22 @@ export function DoctorDashboardPage() {
 
   return (
     <>
-      <PageHeader title={`Good day, ${user?.name}`} />
+      <PageHeader title={`${greeting()}, ${user?.name}`} />
       <div className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-3">
-          <StatCard label="Today’s appointments" value={today.length} icon={CalendarDays} />
-          <StatCard label="All upcoming" value={upcoming} icon={Activity} tone="accent" />
-          <StatCard label="Referrals needing action" value={needsAction.length} icon={Send} tone={needsAction.length ? 'amber' : 'brand'} />
+          <StatCard label="Today’s appointments" value={today.length} icon={CalendarDays} to="/doctor/appointments" />
+          <StatCard label="All upcoming" value={upcoming} icon={Activity} tone="accent" to="/doctor/appointments" />
+          <StatCard label="Referrals needing action" value={needsAction.length} icon={Send} tone={needsAction.length ? 'amber' : 'brand'} to="/doctor/referrals" />
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader title="Today" action={<Link to="/doctor/appointments" className="text-sm font-medium text-brand-700 hover:underline">Open schedule</Link>} />
             {today.length ? (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-neutral-100">
                 {today.map((a) => (
                   <li key={a.id} className="flex items-center gap-3 px-5 py-3">
                     <span className="w-16 text-sm font-semibold text-brand-800">{formatTime(a.dateTime)}</span>
-                    <span className="flex-1"><span className="block text-sm font-medium">{a.patientName}</span><span className="block truncate text-xs text-slate-500">{a.reason}</span></span>
+                    <span className="flex-1"><span className="block text-sm font-medium">{a.patientName}</span><span className="block truncate text-xs text-neutral-500">{a.reason}</span></span>
                     {a.type === 'ONLINE' && <Video className="size-4 text-accent-600" aria-label="Online" />}
                   </li>
                 ))}
@@ -43,10 +43,10 @@ export function DoctorDashboardPage() {
           <Card>
             <CardHeader title="Referral updates" action={<Link to="/doctor/referrals" className="text-sm font-medium text-brand-700 hover:underline">All referrals</Link>} />
             {needsAction.length ? (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-neutral-100">
                 {needsAction.map((r) => (
                   <li key={r.id} className="flex items-center gap-3 px-5 py-3">
-                    <span className="flex-1"><span className="block text-sm font-medium">{r.patientName}</span><span className="block text-xs text-slate-500">{r.hospitalName}{r.responseNote && `: “${r.responseNote}”`}</span></span>
+                    <span className="flex-1"><span className="block text-sm font-medium">{r.patientName}</span><span className="block text-xs text-neutral-500">{r.hospitalName}{r.responseNote && `: “${r.responseNote}”`}</span></span>
                     <StatusBadge status={r.status} />
                   </li>
                 ))}

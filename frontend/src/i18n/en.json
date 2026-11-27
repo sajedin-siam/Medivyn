@@ -16,7 +16,13 @@
     "departments": "Departments",
     "billing": "Billing",
     "hospital": "Services & capacity",
-    "audit": "Audit history"
+    "audit": "Audit history",
+    "group": {
+      "care": "Care",
+      "records": "Records and bills",
+      "wellbeing": "Wellbeing",
+      "administration": "Administration"
+    }
   },
   "common": {
     "signOut": "Sign out",
@@ -25,7 +31,9 @@
     "noNotifications": "You're all caught up.",
     "language": "বাংলা",
     "skip": "Skip to content",
-    "demoMode": "Demo mode: sample data, nothing is sent to a server."
+    "demoMode": "Demo mode: sample data, nothing is sent to a server.",
+    "emergencyTitle": "Emergency? Call 999",
+    "emergencyText": "For urgent help, call now or go to the nearest emergency department."
   },
   "roles": {
     "PATIENT": "Patient",

@@ -1,3 +1,6 @@
+import { Annoyed, Frown, Laugh, Meh, Smile, type LucideIcon } from 'lucide-react'
+
 const MOODS = ['', 'Very low', 'Low', 'Okay', 'Good', 'Very good']
-const MOOD_EMOJI = ['', '😞', '🙁', '😐', '🙂', '😄']
-export const moodLabel = (m: number) => `${MOOD_EMOJI[m]} ${MOODS[m]}`
+// line icons instead of emoji: they render the same on every device and follow the text colour
+export const MOOD_ICONS: LucideIcon[] = [Meh, Frown, Annoyed, Meh, Smile, Laugh]
+export const moodLabel = (m: number) => MOODS[m] ?? ''

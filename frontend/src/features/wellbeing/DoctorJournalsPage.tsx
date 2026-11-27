@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { api } from '../../api/client'
 import type { SharedJournalEntry } from '../../api/types'
-import { EmptyState, PageHeader, QueryState } from '../../components/common'
+import { EmptyState, PageHeader, QueryState, MoodIcon } from '../../components/common'
 import { Card, CardBody, CardHeader } from '../../components/ui/card'
 import { Field, Select } from '../../components/ui/form'
 import { formatDate } from '../../lib/format'
@@ -25,7 +25,7 @@ export function MoodChart({ entries }: { entries: SharedJournalEntry[] }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <figcaption className="mt-2 text-xs text-slate-500">Mood scale: 1 very low, 5 very good. Only entries the patient chose to share are shown.</figcaption>
+      <figcaption className="mt-2 text-xs text-neutral-500">Mood scale: 1 very low, 5 very good. Only entries the patient chose to share are shown.</figcaption>
     </figure>
   )
 }
@@ -55,11 +55,11 @@ export function DoctorJournalsPage() {
               </Card>
               <Card>
                 <CardHeader title="Entries" />
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-neutral-100">
                   {[...entries].reverse().map((e) => (
                     <li key={e.id} className="px-5 py-4">
-                      <p className="text-sm"><span className="font-medium">{moodLabel(e.mood)}</span> <span className="text-slate-500">· {formatDate(e.date)}</span></p>
-                      <p className="mt-1 text-slate-700">{e.text}</p>
+                      <p className="flex items-center gap-1.5 text-sm"><MoodIcon mood={e.mood} className="size-4 text-accent-600" /><span className="font-medium">{moodLabel(e.mood)}</span> <span className="text-neutral-500">· {formatDate(e.date)}</span></p>
+                      <p className="mt-1 text-neutral-700">{e.text}</p>
                     </li>
                   ))}
                 </ul>

@@ -48,13 +48,13 @@ export function AdminReferralsPage() {
       <Card>
         <QueryState query={refs}>
           {(list) => list.length ? (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-neutral-100">
               {list.map((r) => (
                 <li key={r.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">{r.patientName} <span className="font-normal text-slate-500">from {r.fromDoctor}</span></p>
-                    <p className="text-sm text-slate-500"><Badge tone="accent">{r.service}</Badge> <span className="ml-1">{formatDate(r.createdAt)}</span></p>
-                    <p className="mt-1 text-sm text-slate-600">{r.reason}</p>
+                    <p className="font-medium">{r.patientName} <span className="font-normal text-neutral-500">from {r.fromDoctor}</span></p>
+                    <p className="text-sm text-neutral-500"><Badge tone="accent">{r.service}</Badge> <span className="ml-1">{formatDate(r.createdAt)}</span></p>
+                    <p className="mt-1 text-sm text-neutral-600">{r.reason}</p>
                   </div>
                   {r.status === 'PENDING' ? (
                     <div className="flex flex-wrap gap-2">

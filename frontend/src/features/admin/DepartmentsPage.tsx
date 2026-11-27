@@ -8,11 +8,13 @@ import { Button } from '../../components/ui/button'
 import { Card, CardBody } from '../../components/ui/card'
 import { Input } from '../../components/ui/form'
 import { useAction } from '../../hooks/useAction'
+import { useConfirm } from '../../hooks/useConfirm'
 
 export function DepartmentsPage() {
   const q = useQuery({ queryKey: ['departments'], queryFn: () => api.get<Department[]>('/admin/departments') })
   const [name, setName] = useState('')
   const add = useAction(() => api.post('/admin/departments', { name: name.trim() }), { success: 'Department added', invalidate: [['departments']], onSuccess: () => setName('') })
+  const [confirmDialog, ask] = useConfirm()
   const del = useAction((id: string) => api.del(`/admin/departments/${id}`), { success: 'Department removed', invalidate: [['departments']] })
 
   return (
@@ -32,14 +34,15 @@ export function DepartmentsPage() {
             {list.map((d) => (
               <Card key={d.id} className="flex items-center gap-4 p-5">
                 <div className="rounded-lg bg-brand-50 p-2.5 text-brand-700"><Users className="size-5" aria-hidden /></div>
-                <div className="flex-1"><p className="font-medium">{d.name}</p><p className="text-sm text-slate-500">{d.doctorCount} doctor{d.doctorCount === 1 ? '' : 's'}</p></div>
+                <div className="flex-1"><p className="font-medium">{d.name}</p><p className="text-sm text-neutral-500">{d.doctorCount} doctor{d.doctorCount === 1 ? '' : 's'}</p></div>
                 <Button size="sm" variant="ghost" aria-label={`Remove ${d.name}`} disabled={d.doctorCount > 0} title={d.doctorCount > 0 ? 'Move or remove its doctors first' : undefined}
-                  onClick={() => confirm(`Remove ${d.name}?`) && del.mutate(d.id)}><Trash2 className="size-4" /></Button>
+                  onClick={() => ask(`Remove the ${d.name} department?`, 'Remove', () => del.mutate(d.id))}><Trash2 className="size-4" /></Button>
               </Card>
             ))}
           </div>
         ) : <Card><EmptyState icon={Users} title="No departments" /></Card>}
       </QueryState>
+      {confirmDialog}
     </>
   )
 }

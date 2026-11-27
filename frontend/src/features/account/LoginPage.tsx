@@ -51,7 +51,7 @@ export function LoginPage() {
                     <span className="rounded-lg bg-brand-50 p-2 text-brand-700"><Icon className="size-5" aria-hidden /></span>
                     <span>
                       <span className="block text-sm font-semibold">{t(`roles.${role}`)}</span>
-                      <span className="block text-[13px] text-neutral-500">{name}</span>
+                      <span className="block text-sm text-neutral-500">{name}</span>
                     </span>
                   </button>
                 ))}

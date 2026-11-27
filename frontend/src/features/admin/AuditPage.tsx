@@ -25,7 +25,7 @@ export function AuditPage() {
               <Table>
                 <thead><tr><Th>When</Th><Th>Who</Th><Th>Action</Th><Th>Record</Th></tr></thead>
                 <tbody>{rows.map((a) => (
-                  <tr key={a.id}><Td className="whitespace-nowrap text-slate-500">{formatDateTime(a.at)}</Td><Td className="font-medium">{a.actor}</Td><Td>{a.action}</Td><Td>{a.target}</Td></tr>
+                  <tr key={a.id}><Td className="whitespace-nowrap text-neutral-500">{formatDateTime(a.at)}</Td><Td className="font-medium">{a.actor}</Td><Td>{a.action}</Td><Td>{a.target}</Td></tr>
                 ))}</tbody>
               </Table>
             ) : <EmptyState icon={ShieldCheck} title="No matching entries" />

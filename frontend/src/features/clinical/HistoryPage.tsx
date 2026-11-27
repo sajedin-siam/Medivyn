@@ -11,7 +11,7 @@ export function HistoryPage() {
   return (
     <>
       <PageHeader title="Medical history" description="Diagnoses and prescriptions recorded by your doctors." />
-      <p className="mb-4 flex items-center gap-2 text-sm text-slate-500"><Lock className="size-4" aria-hidden /> Only you and your treating doctors can see this.</p>
+      <p className="mb-4 flex items-center gap-2 text-sm text-neutral-500"><Lock className="size-4" aria-hidden /> Only you and your treating doctors can see this.</p>
       <Card>
         <QueryState query={records}>
           {(list) => list.length
