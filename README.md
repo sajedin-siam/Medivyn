@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banners/mediconnect/gradient-1280x400.svg" alt="MediConnect EHMS: AI-assisted e-healthcare management system" width="100%">
+  <img src="assets/banners/mediconnect/clinical-minimal-animated-1280x400.svg" alt="MediConnect EHMS: AI-assisted e-healthcare management system" width="100%">
 </p>
 
 **AI-Assisted E-Healthcare Management System with Referral Coordination, Blood Donor Finder and Mental Wellbeing Support**
@@ -23,8 +23,8 @@
   <img src="https://img.shields.io/badge/Docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
   <img src="https://img.shields.io/badge/HL7-FHIR-E8412A?style=flat-square" alt="HL7 FHIR">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19">
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 5">
-  <img src="https://img.shields.io/badge/Vite-build-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 7">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
   <img src="https://img.shields.io/badge/JUnit-5-25A162?style=flat-square&logo=junit5&logoColor=white" alt="JUnit 5">
 </p>
@@ -34,6 +34,8 @@ MediConnect is a web and mobile platform that manages the daily work of a hospit
 - **coordinates referrals between hospitals** and automatically transfers the patient's medical reports when a referral is accepted,
 - **finds nearby blood donors quickly** while keeping every donor's location private, and
 - **supports mental wellbeing** with a private journal, mood trends and an AI chatbot.
+
+> **Current state of this repository:** it holds the **web frontend** (React, in `frontend/`) and a static landing page. The frontend runs fully on its own in **mock mode**, where an in-browser fake API with demo data stands in for the backend. The Spring Boot backend, `docker-compose.yml`, `pom.xml` and the SRS document described below are not committed yet; the mock API in `frontend/src/mock/server.ts` is the REST contract the backend must implement.
 
 ---
 
@@ -53,7 +55,6 @@ MediConnect is a web and mobile platform that manages the daily work of a hospit
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [Author](#author)
-- [Disclaimer](#disclaimer)
 - [License](#license)
 
 ---
@@ -67,13 +68,14 @@ MediConnect is a web and mobile platform that manages the daily work of a hospit
 
 ### Appointments and clinical records
 - Search doctors by name, specialty or department
-- Book in-person appointments or online sessions (meeting link attached to the appointment)
+- Book in-person appointments or online sessions (meeting link attached to the appointment); only the doctor's free, future time slots can be booked, and a slot cannot be booked twice
 - Doctors record diagnoses and prescriptions, which are stored in the patient's medical history
 - Medical history is visible only to the patient and the treating doctor
 
 ### Billing and payments
 - Hospital admins create bills for appointments
 - Patients view and pay bills (cash, card through SSLCommerz, mobile payment through bKash)
+- Card and bKash bills are marked paid only when the payment gateway confirms; cash bills stay unpaid until staff mark them paid at the counter
 - New payment methods plug in through a common `PaymentMethod` interface
 
 ### Medical reports
@@ -103,9 +105,21 @@ MediConnect is a web and mobile platform that manages the daily work of a hospit
 - Online sessions with mental health doctors
 
 ### Administration and audit
-- Manage doctors and departments
-- Summary reports for appointments, billing, referrals and blood requests
+- Manage doctors and departments (a doctor with booked appointments cannot be removed until those are moved or cancelled)
+- Summary dashboard for appointments, billing, referrals and blood requests, computed from live data
 - Insert-only audit history of who changed what and when
+
+### Accessibility and usability
+Built for people who may be unwell, older, anxious or on a phone:
+
+- **Atkinson Hyperlegible Next**, a typeface drawn for low-vision readers, with Hind Siliguri for Bangla; no text smaller than 14px for body content
+- Every status (Booked, Paid, Pending, Declined and so on) shows an **icon and a word**, never colour alone
+- Required fields are marked, errors appear next to the field with an icon, and buttons are at least 44px tall on touch screens
+- Full keyboard use with visible focus; dialogs use the native `<dialog>`; motion is turned off for users who ask for reduced motion
+- Patients and donors always see an **"Emergency? Call 999"** link in the menu
+- Dates near today read "Today, 15:00" or "Tomorrow, 12:00"; dashboard figures link to the page where you act on them
+- Menus are grouped (Care, Records and bills, Wellbeing, Administration), and lists stack cleanly on phones
+- Confirmation steps use the app's own dialog instead of the browser's pop-up
 
 ### AI assistance (assistive only)
 AI is used for exactly four functions: **report summaries, donor ranking, mood trend analysis and the chatbot**. It never makes a diagnosis or a medical decision, and the system keeps working when the AI service is unavailable.
@@ -139,11 +153,11 @@ AI is used for exactly four functions: **report summaries, donor ranking, mood t
 | AI integration | AI gateway service (redaction, OCR) behind the `AiService` interface |
 | Payments | SSLCommerz, bKash |
 | Interoperability | HL7 FHIR (report exchange with other hospitals) |
-| Web frontend | React 19, TypeScript, Vite, React Router |
-| UI components | Tailwind CSS 4 with small in-house accessible components (native `<dialog>`, labelled fields), lucide icons, sonner toasts |
+| Web frontend | React 19, TypeScript 7, Vite 8, React Router |
+| UI components | Tailwind CSS 4 with small in-house accessible components (native `<dialog>`, labelled fields), lucide icons, sonner toasts, Atkinson Hyperlegible Next |
 | Frontend data and forms | TanStack Query (server state), React Hook Form + Zod (validation) |
-| Frontend features | Recharts (mood trend, reports), oidc-client-ts (Keycloak login), react-i18next (English and Bangla) |
-| Frontend testing | Vitest, React Testing Library |
+| Frontend features | Recharts (mood trend, reports), oidc-client-ts (Keycloak login), react-i18next (English now; Bangla once every page is translated) |
+| Frontend testing | Vitest, React Testing Library, oxlint; GitHub Actions CI |
 | Mobile app | Patients and donors, push notifications, device location |
 | Database | PostgreSQL 16 with PostGIS, read replicas |
 | Cache | Redis (cache, live donor location) |
@@ -168,24 +182,32 @@ Inside the core, each layer only calls the layer below it, and controllers never
 
 ```
 mediconnect-ehms/
+├── .github/workflows/
+│   └── frontend.yml             # CI: typecheck, tests, lint and build for the frontend
 ├── docs/
-│   └── SRS_E-Healthcare_Management_System_v1.1.docx
+│   ├── screenshots/             # screenshots used in this README
+│   └── SRS_E-Healthcare_Management_System_v1.1.docx   # (not committed yet)
 ├── frontend/                    # React + TypeScript web portals (Vite)
+│   ├── index.html               # static landing page at "/"
+│   ├── app.html                 # entry for the React app (every other route)
+│   ├── public/assets/           # the landing page's design kit (CSS, scripts, UI fragments)
 │   ├── src/
 │   │   ├── app/                 # router, providers, query client
 │   │   ├── api/                 # API client and TypeScript types mirroring the Java DTOs
 │   │   ├── auth/                # Keycloak login, demo login and role-based route guard
-│   │   ├── components/          # shared UI components and page building blocks
+│   │   ├── components/          # shared UI components (button, dialog, form, badge, table) and page blocks
 │   │   ├── features/            # one folder per module: account, appointments, clinical, billing,
 │   │   │                        #   reports, referrals, blood, wellbeing, notifications, admin
-│   │   ├── layouts/             # app shell with role-based navigation
-│   │   ├── mock/                # in-browser fake API and demo data (also the REST contract)
+│   │   ├── hooks/               # useAction (mutation + toast), useConfirm (confirmation dialog)
+│   │   ├── layouts/             # app shell with grouped, role-based navigation
+│   │   ├── lib/                 # date, money and mood helpers
+│   │   ├── mock/                # in-browser fake API and demo data (also the REST contract and its tests)
 │   │   ├── i18n/                # English and Bangla translations
 │   │   └── main.tsx
 │   ├── .env.example             # VITE_API_MODE=mock | live, Keycloak settings
 │   ├── package.json
 │   └── vite.config.ts           # dev proxy: /api → http://localhost:8080
-├── src/                         # Spring Boot backend (Java)
+├── src/                         # Spring Boot backend (Java) — not committed yet
 │   ├── main/
 │   │   ├── java/com/mediconnect/
 │   │   │   ├── config/          # security, scheduling, application settings
@@ -205,9 +227,9 @@ mediconnect-ehms/
 │   │       └── application.properties
 │   └── test/java/com/mediconnect/
 ├── .gitignore
-├── docker-compose.yml           # PostgreSQL, Redis, Kafka, Temporal, Keycloak, object storage
+├── docker-compose.yml           # PostgreSQL, Redis, Kafka, Temporal, Keycloak, object storage (not committed yet)
 ├── mediconnect_production_architecture.svg
-├── pom.xml
+├── pom.xml                      # (not committed yet)
 └── README.md
 ```
 
@@ -221,7 +243,7 @@ The backend is Java and Spring Boot; the frontend is a separate React app that t
 
 - JDK 17 or newer
 - Maven 3.9+ (or use the included Maven wrapper `./mvnw`)
-- Node.js 20 LTS or newer, with npm (for the React frontend)
+- Node.js 22 LTS or newer, with npm (for the React frontend; CI uses Node 26)
 - Docker and Docker Compose (runs PostgreSQL with PostGIS, Redis, Kafka, Temporal, Keycloak and object storage locally)
 - Git
 
@@ -279,12 +301,12 @@ Then open **http://localhost:5173** in your browser.
 
 The frontend has two modes, set with `VITE_API_MODE` in `frontend/.env` (copy it from `.env.example`):
 
-- **`mock`** (default): the whole UI runs on built-in sample data with a demo login for each role. No backend, database or Keycloak is needed, so you can start the frontend on its own (skip steps 3 and 4).
+- **`mock`** (default): the whole UI runs on built-in sample data with a demo login for each role (patient, doctor, donor, hospital admin). No backend, database or Keycloak is needed, so you can start the frontend on its own (skip steps 3 and 4). Demo data is kept in the browser's local storage; clear site data to start fresh.
 - **`live`**: requests go to the Spring Boot API, and users sign in through Keycloak. The Vite dev server forwards `/api` to the backend on port 8080, so no CORS setup is needed during development.
 
 The REST endpoints the backend must provide are listed in `frontend/src/mock/server.ts`.
 
-For production, `npm run build` creates static files in `frontend/dist/`, which are served from the CDN in front of the API gateway.
+For production, `npm run build` creates static files in `frontend/dist/`, which are served from the CDN in front of the API gateway. The host must serve `index.html` (the landing page) at `/` and **`app.html` for every other path that is not a file**, so links such as `/patient/bills` open the app directly.
 
 ---
 
@@ -359,11 +381,20 @@ Unit tests cover the core business rules without the database or the AI service,
 - bill status updates after payment
 - role-based access to medical history, reports and journal entries
 
-Frontend tests (components, forms and role-based routes):
+Frontend checks (the same ones CI runs on every pull request):
 
 ```bash
 cd frontend
-npm test
+npm test            # Vitest: components, forms, role-based routes, date helpers and the API business rules
+npm run typecheck
+npm run lint
+npm run build
+```
+
+The API business-rule tests in `src/mock/server.test.ts` (ownership checks, no double booking, one answer per donor, cash bills, booking rules) run against the mock by default. To check the real backend against the same rules, seed it with the demo data, expose a test-only `POST /test/reset`, and run:
+
+```bash
+API_URL=http://localhost:8080/api API_TOKENS='{"p1":"<token>","p2":"<token>","d1":"<token>","d9":"<token>","n1":"<token>","a1":"<token>"}' npx vitest run src/mock/server.test.ts
 ```
 
 ---
@@ -404,13 +435,27 @@ The full **Software Requirements Specification (v1.1)** is in [`docs/`](docs/). 
 
 ## Screenshots
 
-_Coming soon._
+Taken in mock mode with the built-in demo data (all names are fictional).
 
-<!--
-![Login](docs/screenshots/login.png)
+**Patient dashboard** — key figures link to where you act on them; the emergency line stays in the menu.
+
 ![Patient dashboard](docs/screenshots/patient-dashboard.png)
-![Blood request](docs/screenshots/blood-request.png)
--->
+
+**Doctor's appointments** — today and upcoming visits with history, referral and diagnosis actions.
+
+![Doctor appointments](docs/screenshots/doctor-appointments.png)
+
+**Hospital overview** — appointments, revenue, open blood requests and referral status for the admin.
+
+![Admin dashboard](docs/screenshots/admin-dashboard.png)
+
+**Mood journal** — private entries on a 1 to 5 scale, shared only with the doctors the patient picks.
+
+![Mood journal](docs/screenshots/patient-journal.png)
+
+**On a phone** — appointment cards stack, with large buttons.
+
+<img src="docs/screenshots/patient-appointments-mobile.png" alt="Patient appointments on a phone" width="320">
 
 ---
 
@@ -418,7 +463,7 @@ _Coming soon._
 
 1. Create a feature branch: `git checkout -b feature/blood-reminders`
 2. Commit small, focused changes with clear messages
-3. Run `./mvnw test` and `npm test` (in `frontend/`) before pushing
+3. Run `./mvnw test`, and in `frontend/` run `npm test`, `npm run typecheck` and `npm run lint` before pushing (CI runs the frontend checks on every pull request)
 4. Open a pull request against `main`
 
 ---
@@ -430,12 +475,6 @@ _Coming soon._
 **Co-author:** Masud Ibn Musa
 
 Daffodil International University
-
----
-
-## Disclaimer
-
-This is an academic project. It is **not** a certified medical system and must not be used for real diagnosis or treatment. The AI features are assistive only, and the chatbot is not a doctor.
 
 ---
 
