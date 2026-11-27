@@ -8,7 +8,7 @@ import { EmptyState, PageHeader, QueryState, Spinner } from '../../components/co
 import { Button } from '../../components/ui/button'
 import { Card, CardHeader } from '../../components/ui/card'
 import { Dialog } from '../../components/ui/dialog'
-import { isToday } from '../../lib/format'
+import { isPast, isToday } from '../../lib/format'
 import { RecordDialog } from '../clinical/RecordDialog'
 import { RecordList } from '../clinical/RecordList'
 import { AppointmentItem } from './AppointmentItem'
@@ -42,7 +42,8 @@ export function DoctorAppointmentsPage() {
           const open = list.filter((a) => a.status === 'BOOKED')
           const groups: [string, Appointment[]][] = [
             ['Today', open.filter((a) => isToday(a.dateTime))],
-            ['Upcoming', open.filter((a) => !isToday(a.dateTime))],
+            ['Upcoming', open.filter((a) => !isToday(a.dateTime) && !isPast(a.dateTime))],
+            ['Earlier, not yet recorded', open.filter((a) => !isToday(a.dateTime) && isPast(a.dateTime))],
             ['Completed', list.filter((a) => a.status === 'COMPLETED').reverse()],
           ]
           return list.length ? (

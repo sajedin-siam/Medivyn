@@ -15,6 +15,8 @@ export const formatTaka = (amount: number) => `৳${amount.toLocaleString(locale
 
 export const isToday = (iso: string) => new Date(iso).toDateString() === new Date().toDateString()
 
+export const isPast = (iso: string) => new Date(iso) < new Date()
+
 export const humanize = (s: string) => s.charAt(0) + s.slice(1).toLowerCase().replaceAll('_', ' ')
 
 /** YYYY-MM-DD in the user's own time zone (toISOString would give the UTC date). */
