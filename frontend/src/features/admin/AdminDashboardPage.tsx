@@ -39,7 +39,7 @@ export function AdminDashboardPage() {
                         <XAxis dataKey="week" tick={{ fontSize: 12, fill: '#64748b' }} />
                         <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#64748b' }} />
                         <Tooltip cursor={{ fill: '#f1f5f9' }} />
-                        <Bar dataKey="count" name="Appointments" fill="#1a4be0" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="count" name="Appointments" fill="#0f6e56" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>

@@ -1,17 +1,17 @@
 @import 'tailwindcss';
 
-/* Design tokens: the landing page's palette (white ground, one blue accent).
+/* Design tokens: the README banner's palette (white ground, one teal-green accent).
    Type is Atkinson Hyperlegible Next, drawn for low-vision readers: patients may be unwell, older or on a phone.
    Token names stay brand-* and accent-* so every screen picks them up. */
 @theme {
-  --color-brand-50: #eef2fe;
-  --color-brand-100: #dce5fd;
-  --color-brand-200: #b9cafb;
-  --color-brand-500: #3d68ea;
-  --color-brand-600: #1a4be0;
-  --color-brand-700: #163fbd;
-  --color-brand-800: #13349a;
-  --color-brand-900: #0f2a7a;
+  --color-brand-50: #eaf6f2;
+  --color-brand-100: #cdebe2;
+  --color-brand-200: #9fd8c6;
+  --color-brand-500: #0f9d7a;
+  --color-brand-600: #0f6e56;
+  --color-brand-700: #0d5c48;
+  --color-brand-800: #0b4a3e;
+  --color-brand-900: #0b2e2a;
 
   /* the sage of the landing page's lit ground, for the second tone (never violet) */
   --color-accent-50: #eef2ec;
