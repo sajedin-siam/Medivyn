@@ -58,8 +58,12 @@
   },
   "login": {
     "title": "MediConnect-এ সাইন ইন করুন",
-    "keycloak": "MediConnect আইডি দিয়ে চালিয়ে যান",
-    "demoTitle": "একটি ডেমো অ্যাকাউন্ট বেছে নিন",
-    "noAccount": "অ্যাকাউন্ট নেই?"
+    "noAccount": "অ্যাকাউন্ট নেই?",
+    "username": "ইমেইল",
+    "password": "পাসওয়ার্ড",
+    "submit": "সাইন ইন",
+    "or": "অথবা",
+    "google": "Google দিয়ে চালিয়ে যান",
+    "demoHint": "ডেমো: patient@demo.test, doctor@demo.test, donor@demo.test বা admin@demo.test — পাসওয়ার্ড demo1234"
   }
 }

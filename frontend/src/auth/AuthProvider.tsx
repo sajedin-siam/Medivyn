@@ -2,8 +2,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 import { API_MODE, configureClient } from '../api/client'
-import type { Role, User } from '../api/types'
-import { AuthContext } from './useAuth'
+import type { User } from '../api/types'
+import { AuthContext, type LoginInput } from './useAuth'
 
 const MOCK_KEY = 'mediconnect-mock-user'
 
@@ -47,17 +47,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  async function login(role?: Role) {
+  async function login(input: LoginInput) {
     if (API_MODE === 'mock') {
-      const [{ DEMO_USERS }, { setMockUser }] = await Promise.all([import('../mock/data'), import('../mock/server')])
-      const u = DEMO_USERS.find((d) => d.role === (role ?? 'PATIENT'))!
+      const [{ DEMO_USERS, DEMO_PASSWORD }, { setMockUser }] = await Promise.all([import('../mock/data'), import('../mock/server')])
+      const u = input === 'google'
+        ? DEMO_USERS[0]
+        : DEMO_USERS.find((d) => d.email === input.username.trim().toLowerCase() && input.password === DEMO_PASSWORD)
+      if (!u) throw new Error('Wrong email or password')
       sessionStorage.setItem(MOCK_KEY, JSON.stringify(u))
       setMockUser(u)
       setUser(u)
       return
     }
-    const { userManager } = await import('./oidc')
-    await userManager.signinRedirect()
+    const { userManager, toAppUser } = await import('./oidc')
+    // Keycloak skips its own login page and goes straight to the Google identity provider
+    if (input === 'google') return userManager.signinRedirect({ extraQueryParams: { kc_idp_hint: 'google' } })
+    try {
+      const oidcUser = await userManager.signinResourceOwnerCredentials(input)
+      const appUser = toAppUser(oidcUser)
+      if (!appUser) throw new Error('Your account has no access yet. If you registered as a doctor, a hospital admin must approve you first.')
+      setUser(appUser)
+    } catch (e) {
+      if (e instanceof Error && e.message.startsWith('Your account')) throw e
+      throw new Error('Wrong email or password')
+    }
   }
 
   async function logout() {

@@ -58,8 +58,12 @@
   },
   "login": {
     "title": "Sign in to MediConnect",
-    "keycloak": "Continue with MediConnect ID",
-    "demoTitle": "Choose a demo account",
-    "noAccount": "No account yet?"
+    "noAccount": "No account yet?",
+    "username": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "or": "or",
+    "google": "Continue with Google",
+    "demoHint": "Demo: patient@demo.test, doctor@demo.test, donor@demo.test or admin@demo.test — password demo1234"
   }
 }
