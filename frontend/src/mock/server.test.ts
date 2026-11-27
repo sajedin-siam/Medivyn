@@ -4,7 +4,7 @@
 // API_TOKENS maps each user id used below to an access token for that user.
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ApiError } from '../api/errors'
-import type { Appointment, Bill, BloodRequest, DonorProfile, User } from '../api/types'
+import type { AdminSummary, Appointment, Bill, BloodRequest, DonorProfile, User } from '../api/types'
 import { DEMO_USERS } from './data'
 import { localDate } from '../lib/format'
 import { mockFetch, resetMockDb, setMockUser } from './server'
@@ -48,6 +48,15 @@ describe('API business rules', () => {
     await expect(call('POST', '/appointments', { ...base, dateTime: odd.toISOString() })).rejects.toMatchObject({ status: 400 })
     await expect(call('POST', '/appointments', { ...base, dateTime: new Date(Date.now() - 86_400_000).toISOString() })).rejects.toMatchObject({ status: 400 })
     await expect(call('POST', '/appointments', { ...base, doctorId: 'd5' })).rejects.toMatchObject({ status: 404 })
+  })
+
+  it('builds the admin summary from the stored data', async () => {
+    as('HOSPITAL_ADMIN')
+    const s = await call<AdminSummary>('GET', '/admin/summary')
+    expect(s.revenuePaid).toBe(1000)
+    expect(s.revenueUnpaid).toBe(1600)
+    expect(s.referrals).toEqual({ PENDING: 1, ACCEPTED: 0, DECLINED: 0, MORE_INFO_NEEDED: 0 })
+    expect(s.appointmentsByWeek.reduce((n, w) => n + w.count, 0)).toBe(5)
   })
 
   it('blocks other roles from admin endpoints', async () => {

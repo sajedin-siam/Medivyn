@@ -371,15 +371,31 @@ const routes: [string, string, Handler][] = [
   ['GET', '/admin/summary', (): AdminSummary => {
     requireRole('HOSPITAL_ADMIN')
     const referrals = { PENDING: 0, ACCEPTED: 0, DECLINED: 0, MORE_INFO_NEEDED: 0 }
-    db.referrals.forEach((r) => referrals[r.status]++)
+    // same set as the incoming-referrals list
+    db.referrals.filter((r) => r.hospitalId === ADMIN_HOSPITAL).forEach((r) => referrals[r.status]++)
+    const appts = db.appointments.filter((a) => a.status !== 'CANCELLED')
+    const today = new Date(); today.setHours(0, 0, 0, 0)
+    // four 7-day buckets: the three weeks before today, then today and the six days after it
+    const appointmentsByWeek = [-21, -14, -7, 0].map((offset) => {
+      const from = new Date(today); from.setDate(from.getDate() + offset)
+      const to = new Date(from); to.setDate(to.getDate() + 7)
+      return {
+        week: offset === 0 ? 'This week' : from.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+        count: appts.filter((a) => new Date(a.dateTime) >= from && new Date(a.dateTime) < to).length,
+      }
+    })
+    const sum = (status: Bill['status']) => db.bills.filter((b) => b.status === status).reduce((s, b) => s + b.amount, 0)
     return {
-      appointmentsThisMonth: db.appointments.length + 38,
-      revenuePaid: db.bills.filter((b) => b.status === 'PAID').reduce((s, b) => s + b.amount, 0) + 52000,
-      revenueUnpaid: db.bills.filter((b) => b.status === 'UNPAID').reduce((s, b) => s + b.amount, 0),
+      appointmentsThisMonth: appts.filter((a) => {
+        const d = new Date(a.dateTime)
+        return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth()
+      }).length,
+      revenuePaid: sum('PAID'),
+      revenueUnpaid: sum('UNPAID'),
       pendingDoctors: db.doctors.filter((d) => d.status === 'PENDING').length,
       referrals,
       openBloodRequests: db.bloodRequests.filter((r) => r.status === 'OPEN').length,
-      appointmentsByWeek: [{ week: 'Week 1', count: 9 }, { week: 'Week 2', count: 14 }, { week: 'Week 3', count: 11 }, { week: 'Week 4', count: db.appointments.length + 4 }],
+      appointmentsByWeek,
     }
   }],
   ['GET', '/admin/audit', () => { requireRole('HOSPITAL_ADMIN'); return db.audit }],
